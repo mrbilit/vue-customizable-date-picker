@@ -19,6 +19,10 @@ import { Calendar } from "./types";
 
 export default Vue.extend({
   props: {
+    currentCalendar: {
+      type: Number,
+      default: 0,
+    },
     month: {
       type: Number,
       required: true,
@@ -28,15 +32,12 @@ export default Vue.extend({
       required: true,
     },
   },
-  data: () => ({
-    calendar: {} as Calendar,
-  }),
-  inject: { inCalendar: "calendar" },
-  created() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.calendar = (this as any).inCalendar;
-  },
+  inject: { inCalendars: "calendars" },
   computed: {
+    calendar(): Calendar {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return ((this as any).inCalendars as Calendar[])[this.currentCalendar];
+    },
     daysInMonth(): number {
       return this.calendar.daysInMonth(this.month, this.year);
     },

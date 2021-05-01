@@ -12,23 +12,31 @@ import DateTable from "./DateTable.vue";
 // types
 import { Calendar } from "./types";
 
-export default function datePickerFactory(calendar: Calendar): Component {
+export default function datePickerFactory(calendars: Calendar[]): Component {
   return Vue.extend({
     props: {
       monthCount: {
         type: Number,
         default: 1,
       },
+      currentCalendar: {
+        type: Number,
+        default: 0,
+      },
     },
     data: function () {
       return {
-        month: calendar.currentMonth,
-        year: calendar.currentYear,
+        month: calendars[this.currentCalendar].currentMonth,
+        year: calendars[this.currentCalendar].currentYear,
       };
     },
-    provide: {
-      calendar,
+    watch: {
+      currentCalendar() {
+        this.month = calendars[this.currentCalendar].currentMonth;
+        this.year = calendars[this.currentCalendar].currentYear;
+      },
     },
+    provide: { calendars },
     computed: {
       dataTables(): VNode[] {
         const tables: VNode[] = [];
@@ -40,6 +48,7 @@ export default function datePickerFactory(calendar: Calendar): Component {
               props: {
                 year: year,
                 month: month,
+                currentCalendar: this.currentCalendar,
               },
             })
           );

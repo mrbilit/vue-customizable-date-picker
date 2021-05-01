@@ -1,9 +1,16 @@
 <template>
   <div class="page-container">
-    <customizable-date-picker key="gre" :month-count="1" />
-    <div dir="rtl">
-      <j-customizable-date-picker key="jal" :month-count="2" />
-    </div>
+    <customizable-date-picker
+      :currentCalendar="currentCalendar"
+      :month-count="1"
+    />
+    <button
+      @click="
+        currentCalendar === 1 ? (currentCalendar = 0) : (currentCalendar = 1)
+      "
+    >
+      switch
+    </button>
   </div>
 </template>
 
@@ -51,11 +58,15 @@ const jalaliCalendar: Calendar = {
   currentMonth: dayjs().calendar("jalali").month(),
   currentDay: dayjs().calendar("jalali").date(),
 };
-const CustomizableDatePicker = factory(gregorianCalendar);
-const JCustomizableDatePicker = factory(jalaliCalendar);
+const CustomizableDatePicker = factory([jalaliCalendar, gregorianCalendar]);
 
 export default Vue.extend({
-  components: { CustomizableDatePicker, JCustomizableDatePicker },
+  components: { CustomizableDatePicker },
+  data: function () {
+    return {
+      currentCalendar: 0,
+    };
+  },
 });
 </script>
 

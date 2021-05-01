@@ -15,15 +15,18 @@ import Vue from "vue";
 import { Calendar } from "./types";
 
 export default Vue.extend({
-  data: () => ({
-    calendar: {} as Calendar,
-  }),
-  inject: { inCalendar: "calendar" },
-  created() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.calendar = (this as any).inCalendar;
+  props: {
+    currentCalendar: {
+      type: Number,
+      default: 0,
+    },
   },
+  inject: { inCalendars: "calendars" },
   computed: {
+    calendar(): Calendar {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return ((this as any).inCalendars as Calendar[])[this.currentCalendar];
+    },
     weekDays(): string[] {
       return this.calendar.weekdaysMin;
     },
