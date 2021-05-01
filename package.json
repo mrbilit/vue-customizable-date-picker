@@ -14,12 +14,18 @@
     "picker",
     "calendar"
   ],
+  "repository": "https://github.com/mrbilit/vue-customizable-date-picker",
+  "files": [
+    "lib/*",
+    "src/*"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --target lib --name vue-customizable-date-picker src/build.js --mode production",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
+  "bundleDependencies": false,
   "dependencies": {
     "core-js": "^3.6.5",
     "dayjs": "^1.10.4",
