@@ -3,15 +3,18 @@
     <div class="month-title">{{ headerTitle }}</div>
     <week-header :currentCalendar="currentCalendar" />
     <month-table
+      :value="value"
       :month="month"
       :year="year"
       :currentCalendar="currentCalendar"
+      @day-click="(day) => $emit('day-click', day)"
+      @input="(value) => $emit('input', value)"
     />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 
 // components
 import WeekHeader from "./WeekHeader.vue";
@@ -21,17 +24,11 @@ import MonthTable from "./MonthTable.vue";
 import { Calendar } from "./types";
 
 export default Vue.extend({
-  inject: { inCalendars: "calendars" },
-  computed: {
-    calendar(): Calendar {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return ((this as any).inCalendars as Calendar[])[this.currentCalendar];
-    },
-    headerTitle(): string {
-      return `${this.calendar.months[this.month]} ${this.year}`;
-    },
-  },
   props: {
+    value: {
+      type: Date as PropType<Date>,
+      required: true,
+    },
     month: {
       type: Number,
       required: true,
@@ -43,6 +40,16 @@ export default Vue.extend({
     currentCalendar: {
       type: Number,
       default: 0,
+    },
+  },
+  inject: { inCalendars: "calendars" },
+  computed: {
+    calendar(): Calendar {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return ((this as any).inCalendars as Calendar[])[this.currentCalendar];
+    },
+    headerTitle(): string {
+      return `${this.calendar.months[this.month]} ${this.year}`;
     },
   },
   components: { WeekHeader, MonthTable },

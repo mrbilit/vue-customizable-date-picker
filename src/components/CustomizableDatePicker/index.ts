@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Vue, { Component } from "vue";
+import Vue, { Component, PropType } from "vue";
 import { VNode } from "vue/types/umd";
 
 // styles
@@ -15,6 +15,10 @@ import { Calendar } from "./types";
 export default function datePickerFactory(calendars: Calendar[]): Component {
   return Vue.extend({
     props: {
+      value: {
+        type: Date as PropType<Date>,
+        required: true,
+      },
       monthCount: {
         type: Number,
         default: 1,
@@ -49,6 +53,11 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 year: year,
                 month: month,
                 currentCalendar: this.currentCalendar,
+                value: this.value,
+              },
+              on: {
+                "day-click": this.$listeners["day-click"],
+                input: this.$listeners["input"],
               },
             })
           );

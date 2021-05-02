@@ -1,8 +1,11 @@
 <template>
   <div class="page-container">
+    <div>{{ value }}</div>
     <customizable-date-picker
+      v-model="value"
       :currentCalendar="currentCalendar"
       :month-count="1"
+      @day-click="onDayClick"
     />
     <button
       @click="
@@ -29,6 +32,18 @@ const gregorianCalendar: Calendar = {
   firstDayInMonth(month: number, year: number): number {
     return dayjs().year(year).month(month).date(1).day();
   },
+  getDate(year: number, month: number, day: number): Date {
+    return dayjs().year(year).month(month).date(day).toDate();
+  },
+  getYear(date: Date): number {
+    return dayjs(date).year();
+  },
+  getMonth(date: Date): number {
+    return dayjs(date).month();
+  },
+  getDayInMonth(date: Date): number {
+    return dayjs(date).date();
+  },
   startDayWeek: 0,
   weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split(
     "_"
@@ -48,6 +63,23 @@ const jalaliCalendar: Calendar = {
   firstDayInMonth(month: number, year: number): number {
     return dayjs().calendar("jalali").year(year).month(month).date(1).day();
   },
+  getDate(year: number, month: number, day: number): Date {
+    return dayjs()
+      .calendar("jalali")
+      .year(year)
+      .month(month)
+      .date(day)
+      .toDate();
+  },
+  getYear(date: Date): number {
+    return dayjs(date).calendar("jalali").year();
+  },
+  getMonth(date: Date): number {
+    return dayjs(date).calendar("jalali").month();
+  },
+  getDayInMonth(date: Date): number {
+    return dayjs(date).calendar("jalali").date();
+  },
   startDayWeek: 6,
   weekdaysMin: "ش_ی_د_س_چ_پ_ج".split("_"),
   weekdays: "شنبه_یک‌شنبه_دوشنبه_سه‌شنبه_چهارشنبه_پنج‌شنبه_جمعه".split("_"),
@@ -64,8 +96,14 @@ export default Vue.extend({
   components: { CustomizableDatePicker },
   data: function () {
     return {
+      value: new Date(),
       currentCalendar: 0,
     };
+  },
+  methods: {
+    onDayClick(day: any) {
+      console.log(day);
+    },
   },
 });
 </script>
