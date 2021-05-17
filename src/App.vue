@@ -4,7 +4,8 @@
     <customizable-date-picker
       v-model="value"
       :currentCalendar="currentCalendar"
-      :month-count="1"
+      :month-count="2"
+      range
       @day-click="onDayClick"
     />
     <button
@@ -20,12 +21,20 @@
 <script lang="ts">
 import Vue from "vue";
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import jalaliday from "jalaliday";
+dayjs.extend(isBetween);
 dayjs.extend(jalaliday);
 
 import factory from "./components/CustomizableDatePicker";
 import { Calendar } from "./components/CustomizableDatePicker/types";
 const gregorianCalendar: Calendar = {
+  isAfter(first: Date, second: Date): boolean {
+    return dayjs(first).isAfter(second, "day");
+  },
+  isBetween(date: Date, first: Date, second: Date): boolean {
+    return dayjs(date).isBetween(first, second, "day");
+  },
   daysInMonth(month: number, year: number): number {
     return dayjs().year(year).month(month).daysInMonth();
   },
@@ -57,6 +66,12 @@ const gregorianCalendar: Calendar = {
   currentDay: dayjs().date(),
 };
 const jalaliCalendar: Calendar = {
+  isAfter(first: Date, second: Date): boolean {
+    return dayjs(first).calendar("jalali").isAfter(second, "day");
+  },
+  isBetween(date: Date, first: Date, second: Date): boolean {
+    return dayjs(date).calendar("jalali").isBetween(first, second, "day");
+  },
   daysInMonth(month: number, year: number): number {
     return dayjs().calendar("jalali").year(year).month(month).daysInMonth();
   },
@@ -96,7 +111,10 @@ export default Vue.extend({
   components: { CustomizableDatePicker },
   data: function () {
     return {
-      value: new Date(),
+      value: {
+        start: null,
+        end: null,
+      },
       currentCalendar: 0,
     };
   },

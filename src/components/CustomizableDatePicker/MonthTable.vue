@@ -1,41 +1,41 @@
 <template>
-  <div class="month-days-container">
-    <template v-for="emptyDay in emptyDays">
-      <div :key="`empty-${emptyDay}`" class="day-container empty" />
-    </template>
-    <template v-for="day in daysInMonth">
-      <div
-        :key="day.dayInMonth"
-        class="day-container"
-        :class="{ selected: day.isSelected }"
-        @click="dayClick(day)"
-      >
-        {{ day.dayInMonth }}
-      </div>
-    </template>
+  <div>
+    <div class="month-title">{{ headerTitle }}</div>
+    <week-header :currentCalendar="currentCalendar" />
+    <div class="month-days-container">
+      <template v-for="emptyDay in emptyDays">
+        <div :key="`empty-${emptyDay}`" class="day-container empty" />
+      </template>
+      <template v-for="day in daysInMonth">
+        <div
+          :key="day.dayInMonth"
+          class="day-container"
+          :class="{ selected: day.isSelected, between: day.isBetween }"
+          @click="dayClick(day)"
+          @mouseenter="dayHover(day)"
+        >
+          {{ day.dayInMonth }}
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
 
-// types
-import { Calendar } from "./types";
+// components
+import WeekHeader from "./WeekHeader.vue";
+// import MonthTable from "./MonthTable.vue";
 
-type Day = {
-  dayInMonth: number;
-  isSelected: boolean;
-};
+// types
+import { Calendar, Day, InputValue, RangeValue } from "./types";
 
 export default Vue.extend({
   props: {
     value: {
-      type: Date as PropType<Date>,
+      type: [Date, Object] as PropType<InputValue>,
       required: true,
-    },
-    currentCalendar: {
-      type: Number,
-      default: 0,
     },
     month: {
       type: Number,
@@ -45,12 +45,31 @@ export default Vue.extend({
       type: Number,
       required: true,
     },
+    currentCalendar: {
+      type: Number,
+      default: 0,
+    },
+    range: {
+      type: Boolean,
+      default: false,
+    },
+    selectedFirstRange: {
+      type: Date as PropType<Date>,
+      default: null,
+    },
+    currentHoveredDay: {
+      type: Object as PropType<Day | null>,
+      default: null,
+    },
   },
   inject: { inCalendars: "calendars" },
   computed: {
     calendar(): Calendar {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return ((this as any).inCalendars as Calendar[])[this.currentCalendar];
+    },
+    headerTitle(): string {
+      return `${this.calendar.months[this.month]} ${this.year}`;
     },
     daysInMonth(): Day[] {
       const list: Day[] = [];
@@ -61,7 +80,10 @@ export default Vue.extend({
       ) {
         list.push({
           dayInMonth: i,
+          year: this.year,
+          month: this.month,
           isSelected: this.isDaySelected(i),
+          isBetween: this.isDayBetween(i),
         });
       }
       return list;
@@ -75,12 +97,42 @@ export default Vue.extend({
       );
     },
   },
+  components: { WeekHeader },
   methods: {
+    dayHover(day: Day) {
+      this.$emit("day-hover", day);
+    },
     dayClick(day: Day) {
-      this.$emit(
-        "input",
-        this.calendar.getDate(this.year, this.month, day.dayInMonth)
-      );
+      if (this.range) {
+        if (this.selectedFirstRange) {
+          const secondSelected = this.calendar.getDate(
+            this.year,
+            this.month,
+            day.dayInMonth
+          );
+          if (this.calendar.isAfter(secondSelected, this.selectedFirstRange)) {
+            this.$emit("input", {
+              start: this.selectedFirstRange,
+              end: secondSelected,
+            });
+          } else {
+            this.$emit("input", {
+              start: secondSelected,
+              end: this.selectedFirstRange,
+            });
+          }
+        } else {
+          this.$emit(
+            "drag",
+            this.calendar.getDate(this.year, this.month, day.dayInMonth)
+          );
+        }
+      } else {
+        this.$emit(
+          "input",
+          this.calendar.getDate(this.year, this.month, day.dayInMonth)
+        );
+      }
       this.$emit("day-click", {
         ...day,
         year: this.year,
@@ -88,17 +140,70 @@ export default Vue.extend({
       });
     },
     isDaySelected(day: number): boolean {
-      return (
-        this.calendar.getYear(this.value) === this.year &&
-        this.calendar.getMonth(this.value) === this.month &&
-        this.calendar.getDayInMonth(this.value) === day
-      );
+      if (this.range) {
+        const value = this.value as RangeValue;
+        if (this.selectedFirstRange) {
+          return (
+            this.calendar.getYear(this.selectedFirstRange) === this.year &&
+            this.calendar.getMonth(this.selectedFirstRange) === this.month &&
+            this.calendar.getDayInMonth(this.selectedFirstRange) === day
+          );
+        }
+        return (
+          (this.calendar.getYear(value.start) === this.year &&
+            this.calendar.getMonth(value.start) === this.month &&
+            this.calendar.getDayInMonth(value.start) === day) ||
+          (this.calendar.getYear(value.end) === this.year &&
+            this.calendar.getMonth(value.end) === this.month &&
+            this.calendar.getDayInMonth(value.end) === day)
+        );
+      } else {
+        return (
+          this.calendar.getYear(this.value as Date) === this.year &&
+          this.calendar.getMonth(this.value as Date) === this.month &&
+          this.calendar.getDayInMonth(this.value as Date) === day
+        );
+      }
+    },
+    isDayBetween(day: number): boolean {
+      if (this.range) {
+        if (this.selectedFirstRange && this.currentHoveredDay) {
+          return this.calendar.isBetween(
+            this.calendar.getDate(this.year, this.month, day),
+            this.selectedFirstRange,
+            this.calendar.getDate(
+              this.currentHoveredDay.year,
+              this.currentHoveredDay.month,
+              this.currentHoveredDay.dayInMonth
+            )
+          );
+        } else if (
+          (this.value as RangeValue).start &&
+          (this.value as RangeValue).end
+        ) {
+          return this.calendar.isBetween(
+            this.calendar.getDate(this.year, this.month, day),
+            (this.value as RangeValue).start,
+            (this.value as RangeValue).end
+          );
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     },
   },
 });
 </script>
 
 <style lang="scss" scoped>
+.month-title {
+  width: 100%;
+  // text
+  text-align: center;
+}
+
 .month-days-container {
   display: flex;
   flex-wrap: wrap;
@@ -118,6 +223,10 @@ export default Vue.extend({
 
   &.selected {
     background: rgba($color: #8f8f8f, $alpha: 0.5);
+  }
+
+  &.between {
+    background: rgba($color: #dbdbdb, $alpha: 0.5);
   }
 
   &.empty {

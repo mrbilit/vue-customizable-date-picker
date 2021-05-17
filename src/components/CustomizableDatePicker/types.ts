@@ -12,4 +12,21 @@ export interface Calendar {
   currentYear: number;
   currentMonth: number;
   currentDay: number;
+  isAfter: (firstDate: Date, secondDate: Date) => boolean;
+  isBetween: (date: Date, firstDate: Date, secondDate: Date) => boolean;
 }
+
+export type RangeValue = {
+  start: Date;
+  end: Date;
+};
+
+export type InputValue = Date | RangeValue;
+
+export type Day = {
+  dayInMonth: number;
+  month: number;
+  year: number;
+  isSelected: boolean;
+  isBetween: boolean;
+};
