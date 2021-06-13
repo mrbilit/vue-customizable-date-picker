@@ -1,9 +1,11 @@
 <template>
   <div class="week-days-container">
     <template v-for="(day, index) in weekDays">
-      <div :key="`week-day-${index}`" class="week-day-container">
-        {{ day }}
-      </div>
+      <slot name="week-day" :day="day">
+        <div :key="`week-day-${index}`" class="week-day-container">
+          {{ day }}
+        </div>
+      </slot>
     </template>
   </div>
 </template>

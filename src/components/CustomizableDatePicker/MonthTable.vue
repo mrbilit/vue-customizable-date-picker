@@ -1,25 +1,33 @@
 <template>
-  <div>
+  <div class="month-table-container">
     <div class="month-title">{{ headerTitle }}</div>
-    <week-header :currentCalendar="currentCalendar" />
+    <slot name="week-header">
+      <week-header :currentCalendar="currentCalendar" v-bind="$scopedSlots" />
+    </slot>
     <div class="month-days-container">
       <template v-for="emptyDay in emptyDays">
-        <div :key="`empty-${emptyDay}`" class="day-container empty" />
+        <div :key="`empty-${emptyDay}`" class="main-day-wrapper empty" />
       </template>
       <template v-for="day in daysInMonth">
         <div
+          class="main-day-wrapper"
           :key="day.dayInMonth"
-          class="day-container"
-          :class="{
-            selected: day.isSelected,
-            between: day.isBetween,
-            disable: day.disabled,
-          }"
           @click="dayClick(day)"
           @mouseenter="dayHover(day)"
         >
-          <slot name="day" :day="day">
-            {{ day.dayInMonth }}
+          <slot name="day-container" :day="day">
+            <div
+              class="main-day-container"
+              :class="{
+                selected: day.isSelected,
+                between: day.isBetween,
+                disable: day.disabled,
+              }"
+            >
+              <slot name="day" :day="day">
+                {{ day.dayInMonth }}
+              </slot>
+            </div>
           </slot>
         </div>
       </template>
@@ -94,11 +102,14 @@ export default Vue.extend({
         i <= this.calendar.daysInMonth(this.month, this.year);
         i++
       ) {
+        const { start, end, isSelected } = this.isDaySelected(i);
         list.push({
           dayInMonth: i,
           year: this.year,
           month: this.month,
-          isSelected: this.isDaySelected(i),
+          isSelected,
+          startRange: start,
+          endRange: end,
           isBetween: this.isDayBetween(i),
           disabled: this.isDisable(i),
         });
@@ -175,30 +186,47 @@ export default Vue.extend({
       }
       return beforeMin || afterMax;
     },
-    isDaySelected(day: number): boolean {
+    isDaySelected(
+      day: number
+    ): {
+      isSelected: boolean;
+      start: boolean;
+      end: boolean;
+    } {
       if (this.range) {
         const value = this.value as RangeValue;
         if (this.selectedFirstRange) {
-          return (
-            this.calendar.getYear(this.selectedFirstRange) === this.year &&
-            this.calendar.getMonth(this.selectedFirstRange) === this.month &&
-            this.calendar.getDayInMonth(this.selectedFirstRange) === day
-          );
+          return {
+            isSelected:
+              this.calendar.getYear(this.selectedFirstRange) === this.year &&
+              this.calendar.getMonth(this.selectedFirstRange) === this.month &&
+              this.calendar.getDayInMonth(this.selectedFirstRange) === day,
+            start: false,
+            end: false,
+          };
         }
-        return (
-          (this.calendar.getYear(value.start) === this.year &&
-            this.calendar.getMonth(value.start) === this.month &&
-            this.calendar.getDayInMonth(value.start) === day) ||
-          (this.calendar.getYear(value.end) === this.year &&
-            this.calendar.getMonth(value.end) === this.month &&
-            this.calendar.getDayInMonth(value.end) === day)
-        );
+        const start =
+          this.calendar.getYear(value.start) === this.year &&
+          this.calendar.getMonth(value.start) === this.month &&
+          this.calendar.getDayInMonth(value.start) === day;
+        const end =
+          this.calendar.getYear(value.end) === this.year &&
+          this.calendar.getMonth(value.end) === this.month &&
+          this.calendar.getDayInMonth(value.end) === day;
+        return {
+          isSelected: start || end,
+          start,
+          end,
+        };
       } else {
-        return (
-          this.calendar.getYear(this.value as Date) === this.year &&
-          this.calendar.getMonth(this.value as Date) === this.month &&
-          this.calendar.getDayInMonth(this.value as Date) === day
-        );
+        return {
+          isSelected:
+            this.calendar.getYear(this.value as Date) === this.year &&
+            this.calendar.getMonth(this.value as Date) === this.month &&
+            this.calendar.getDayInMonth(this.value as Date) === day,
+          start: false,
+          end: false,
+        };
       }
     },
     isDayBetween(day: number): boolean {
@@ -243,13 +271,20 @@ export default Vue.extend({
 .month-days-container {
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
 }
 
-.day-container {
+.main-day-wrapper {
   flex-basis: 14.285714286%;
   flex-grow: 0;
   flex-shrink: 0;
   cursor: pointer;
+
+  &.empty {
+    visibility: hidden;
+  }
+}
+.main-day-container {
   // text
   text-align: center;
   user-select: none;
@@ -264,10 +299,6 @@ export default Vue.extend({
 
   &.between {
     background: rgba($color: #dbdbdb, $alpha: 0.5);
-  }
-
-  &.empty {
-    visibility: hidden;
   }
 
   &.disable {

@@ -30,4 +30,6 @@ export type Day = {
   isSelected: boolean;
   isBetween: boolean;
   disabled: boolean;
+  startRange: boolean;
+  endRange: boolean;
 };

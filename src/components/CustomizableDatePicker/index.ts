@@ -83,7 +83,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
               on: this.readOnly
                 ? {}
                 : {
-                    "day-click": this.$listeners["day-click"],
+                    "day-click": this.$listeners["day-click"] || (() => null),
                     input: this.onInput,
                     drag: this.onDrag,
                     "day-hover": this.onDayHover,
