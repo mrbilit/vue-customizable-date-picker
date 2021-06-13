@@ -135,6 +135,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         [
           createElement(MainHeader, {
             on: { next: (this as any).next, prev: (this as any).prev },
+            scopedSlots: this.$scopedSlots,
           }),
           ...(this as any).dataTables,
         ]
