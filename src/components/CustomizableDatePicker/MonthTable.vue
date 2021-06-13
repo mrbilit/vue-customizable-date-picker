@@ -18,7 +18,9 @@
           @click="dayClick(day)"
           @mouseenter="dayHover(day)"
         >
-          {{ day.dayInMonth }}
+          <slot name="day" :day="day">
+            {{ day.dayInMonth }}
+          </slot>
         </div>
       </template>
     </div>

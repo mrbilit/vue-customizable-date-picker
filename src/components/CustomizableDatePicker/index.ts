@@ -88,6 +88,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                     drag: this.onDrag,
                     "day-hover": this.onDayHover,
                   },
+              scopedSlots: this.$scopedSlots,
             })
           );
         }
