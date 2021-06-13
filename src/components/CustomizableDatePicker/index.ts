@@ -31,6 +31,10 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         type: Boolean,
         default: false,
       },
+      readOnly: {
+        type: Boolean,
+        default: false,
+      },
     },
     data: function () {
       return {
@@ -64,12 +68,14 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 selectedFirstRange: this.selectedFirstRange,
                 currentHoveredDay: this.currentHoveredDay,
               },
-              on: {
-                "day-click": this.$listeners["day-click"],
-                input: this.onInput,
-                drag: this.onDrag,
-                "day-hover": this.onDayHover,
-              },
+              on: this.readOnly
+                ? {}
+                : {
+                    "day-click": this.$listeners["day-click"],
+                    input: this.onInput,
+                    drag: this.onDrag,
+                    "day-hover": this.onDayHover,
+                  },
             })
           );
         }

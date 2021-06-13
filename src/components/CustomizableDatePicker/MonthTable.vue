@@ -75,7 +75,7 @@ export default Vue.extend({
       const list: Day[] = [];
       for (
         let i = 1;
-        i < this.calendar.daysInMonth(this.month, this.year);
+        i <= this.calendar.daysInMonth(this.month, this.year);
         i++
       ) {
         list.push({
