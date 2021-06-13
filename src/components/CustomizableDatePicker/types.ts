@@ -29,4 +29,5 @@ export type Day = {
   year: number;
   isSelected: boolean;
   isBetween: boolean;
+  disabled: boolean;
 };

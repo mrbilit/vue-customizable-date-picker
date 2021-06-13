@@ -35,6 +35,16 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         type: Boolean,
         default: false,
       },
+      min: {
+        type: Date,
+        required: false,
+        default: null,
+      },
+      max: {
+        type: Date,
+        required: false,
+        default: null,
+      },
     },
     data: function () {
       return {
@@ -67,6 +77,8 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 range: this.range,
                 selectedFirstRange: this.selectedFirstRange,
                 currentHoveredDay: this.currentHoveredDay,
+                min: this.min,
+                max: this.max,
               },
               on: this.readOnly
                 ? {}

@@ -10,7 +10,11 @@
         <div
           :key="day.dayInMonth"
           class="day-container"
-          :class="{ selected: day.isSelected, between: day.isBetween }"
+          :class="{
+            selected: day.isSelected,
+            between: day.isBetween,
+            disable: day.disabled,
+          }"
           @click="dayClick(day)"
           @mouseenter="dayHover(day)"
         >
@@ -61,6 +65,16 @@ export default Vue.extend({
       type: Object as PropType<Day | null>,
       default: null,
     },
+    min: {
+      type: Date,
+      required: false,
+      default: null,
+    },
+    max: {
+      type: Date,
+      required: false,
+      default: null,
+    },
   },
   inject: { inCalendars: "calendars" },
   computed: {
@@ -84,6 +98,7 @@ export default Vue.extend({
           month: this.month,
           isSelected: this.isDaySelected(i),
           isBetween: this.isDayBetween(i),
+          disabled: this.isDisable(i),
         });
       }
       return list;
@@ -100,9 +115,11 @@ export default Vue.extend({
   components: { WeekHeader },
   methods: {
     dayHover(day: Day) {
+      if (day.disabled) return;
       this.$emit("day-hover", day);
     },
     dayClick(day: Day) {
+      if (day.disabled) return;
       if (this.range) {
         if (this.selectedFirstRange) {
           const secondSelected = this.calendar.getDate(
@@ -138,6 +155,23 @@ export default Vue.extend({
         year: this.year,
         month: this.month,
       });
+    },
+    isDisable(day: number): boolean {
+      let beforeMin = false;
+      let afterMax = false;
+      if (this.min) {
+        beforeMin = this.calendar.isAfter(
+          (this.min as unknown) as Date,
+          this.calendar.getDate(this.year, this.month, day)
+        );
+      }
+      if (this.max) {
+        afterMax = this.calendar.isAfter(
+          this.calendar.getDate(this.year, this.month, day),
+          (this.max as unknown) as Date
+        );
+      }
+      return beforeMin || afterMax;
     },
     isDaySelected(day: number): boolean {
       if (this.range) {
@@ -216,8 +250,9 @@ export default Vue.extend({
   cursor: pointer;
   // text
   text-align: center;
+  user-select: none;
 
-  &:hover {
+  &:hover:not(.disable) {
     background: rgba($color: #8f8f8f, $alpha: 0.5);
   }
 
@@ -231,6 +266,11 @@ export default Vue.extend({
 
   &.empty {
     visibility: hidden;
+  }
+
+  &.disable {
+    color: gray;
+    cursor: unset;
   }
 }
 </style>
