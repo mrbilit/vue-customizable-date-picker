@@ -311,4 +311,12 @@ html[dir="rtl"] {
     }
   }
 }
+
+@media (max-width: 768px) {
+  .my-date-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
 </style>
