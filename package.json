@@ -19,6 +19,8 @@
     "lib/*",
     "src/*"
   ],
+  "main": "lib/vue-customizable-date-picker.umd.min.js",
+  "types": "src/types.d.ts",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue-customizable-date-picker src/build.js --mode production",
