@@ -7,6 +7,9 @@ dayjs.extend(isBetween);
 dayjs.extend(jalaliday);
 
 export const gregorianCalendar: Calendar = {
+  isSame(first: Date, second: Date): boolean {
+    return dayjs(first).isSame(second, "day");
+  },
   isAfter(first: Date, second: Date): boolean {
     return dayjs(first).isAfter(second, "day");
   },
@@ -31,6 +34,9 @@ export const gregorianCalendar: Calendar = {
   getDayInMonth(date: Date): number {
     return dayjs(date).date();
   },
+  getDayInWeek(date: Date): number {
+    return dayjs(date).day();
+  },
   startDayWeek: 0,
   weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split(
     "_"
@@ -44,6 +50,9 @@ export const gregorianCalendar: Calendar = {
   currentDay: dayjs().date(),
 };
 export const jalaliCalendar: Calendar = {
+  isSame(first: Date, second: Date): boolean {
+    return dayjs(first).calendar("jalali").isSame(second, "day");
+  },
   isAfter(first: Date, second: Date): boolean {
     return dayjs(first).calendar("jalali").isAfter(second, "day");
   },
@@ -72,6 +81,9 @@ export const jalaliCalendar: Calendar = {
   },
   getDayInMonth(date: Date): number {
     return dayjs(date).calendar("jalali").date();
+  },
+  getDayInWeek(date: Date): number {
+    return (dayjs(date).calendar("jalali").day() + 1) % 7;
   },
   startDayWeek: 6,
   weekdaysMin: "ش_ی_د_س_چ_پ_ج".split("_"),

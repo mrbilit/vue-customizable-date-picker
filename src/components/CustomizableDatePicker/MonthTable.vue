@@ -112,6 +112,9 @@ export default Vue.extend({
           endRange: end,
           isBetween: this.isDayBetween(i),
           disabled: this.isDisable(i),
+          dayInWeek: this.calendar.getDayInWeek(
+            this.calendar.getDate(this.year, this.month, i)
+          ),
         });
       }
       return list;
@@ -123,6 +126,17 @@ export default Vue.extend({
           7) %
         7
       );
+    },
+    hoveredDayDate(): Date | null {
+      if (this.currentHoveredDay) {
+        return this.calendar.getDate(
+          this.currentHoveredDay.year,
+          this.currentHoveredDay.month,
+          this.currentHoveredDay.dayInMonth
+        );
+      } else {
+        return null;
+      }
     },
   },
   components: { WeekHeader },
@@ -193,26 +207,31 @@ export default Vue.extend({
       start: boolean;
       end: boolean;
     } {
+      const currentDate = this.calendar.getDate(this.year, this.month, day);
       if (this.range) {
         const value = this.value as RangeValue;
         if (this.selectedFirstRange) {
+          const isSelected = this.calendar.isSame(
+            this.selectedFirstRange,
+            currentDate
+          );
+          let start = false;
+          let isSame = false;
+          if (this.hoveredDayDate) {
+            start = this.calendar.isAfter(
+              this.hoveredDayDate,
+              this.selectedFirstRange
+            );
+            isSame = this.calendar.isSame(this.hoveredDayDate, currentDate);
+          }
           return {
-            isSelected:
-              this.calendar.getYear(this.selectedFirstRange) === this.year &&
-              this.calendar.getMonth(this.selectedFirstRange) === this.month &&
-              this.calendar.getDayInMonth(this.selectedFirstRange) === day,
-            start: false,
-            end: false,
+            isSelected,
+            start: !isSame && isSelected && start,
+            end: !isSame && isSelected && !start,
           };
         }
-        const start =
-          this.calendar.getYear(value.start) === this.year &&
-          this.calendar.getMonth(value.start) === this.month &&
-          this.calendar.getDayInMonth(value.start) === day;
-        const end =
-          this.calendar.getYear(value.end) === this.year &&
-          this.calendar.getMonth(value.end) === this.month &&
-          this.calendar.getDayInMonth(value.end) === day;
+        const start = this.calendar.isSame(value.start, currentDate);
+        const end = this.calendar.isSame(value.end, currentDate);
         return {
           isSelected: start || end,
           start,
@@ -220,10 +239,7 @@ export default Vue.extend({
         };
       } else {
         return {
-          isSelected:
-            this.calendar.getYear(this.value as Date) === this.year &&
-            this.calendar.getMonth(this.value as Date) === this.month &&
-            this.calendar.getDayInMonth(this.value as Date) === day,
+          isSelected: this.calendar.isSame(this.value as Date, currentDate),
           start: false,
           end: false,
         };
@@ -231,15 +247,11 @@ export default Vue.extend({
     },
     isDayBetween(day: number): boolean {
       if (this.range) {
-        if (this.selectedFirstRange && this.currentHoveredDay) {
+        if (this.selectedFirstRange && this.hoveredDayDate) {
           return this.calendar.isBetween(
             this.calendar.getDate(this.year, this.month, day),
             this.selectedFirstRange,
-            this.calendar.getDate(
-              this.currentHoveredDay.year,
-              this.currentHoveredDay.month,
-              this.currentHoveredDay.dayInMonth
-            )
+            this.hoveredDayDate
           );
         } else if (
           (this.value as RangeValue).start &&

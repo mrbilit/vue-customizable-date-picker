@@ -5,6 +5,7 @@ export interface Calendar {
   getYear: (date: Date) => number;
   getMonth: (date: Date) => number;
   getDayInMonth: (date: Date) => number;
+  getDayInWeek: (date: Date) => number;
   startDayWeek: number;
   weekdays: string[];
   weekdaysMin: string[];
@@ -13,6 +14,7 @@ export interface Calendar {
   currentMonth: number;
   currentDay: number;
   isAfter: (firstDate: Date, secondDate: Date) => boolean;
+  isSame: (firstDate: Date, secondDate: Date) => boolean;
   isBetween: (date: Date, firstDate: Date, secondDate: Date) => boolean;
 }
 
@@ -25,6 +27,7 @@ export type InputValue = Date | RangeValue;
 
 export type Day = {
   dayInMonth: number;
+  dayInWeek: number;
   month: number;
   year: number;
   isSelected: boolean;
