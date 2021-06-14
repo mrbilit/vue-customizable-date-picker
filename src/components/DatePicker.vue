@@ -129,8 +129,9 @@ html[dir="rtl"] {
   padding: 0 $gap;
   margin: $gap 0;
   box-sizing: border-box;
+  cursor: pointer;
   &.selected,
-  &:hover {
+  &:hover:not(.disable) {
     .day-container {
       background: $primary;
       color: white;
@@ -184,6 +185,13 @@ html[dir="rtl"] {
       border: 1px solid $primary;
     }
   }
+  &.disable {
+    cursor: unset;
+    .day-container {
+      border: none;
+      color: #dcdcdc;
+    }
+  }
   .day-container {
     position: relative;
     display: flex;
@@ -196,6 +204,7 @@ html[dir="rtl"] {
     box-sizing: border-box;
     border-radius: 10px;
     z-index: 1;
+    user-select: none;
     // text
     color: $primary;
     font-weight: 500;

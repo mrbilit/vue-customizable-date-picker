@@ -294,13 +294,13 @@ export default Vue.extend({
   flex-basis: 14.285714286%;
   flex-grow: 0;
   flex-shrink: 0;
-  cursor: pointer;
 
   &.empty {
     visibility: hidden;
   }
 }
 .main-day-container {
+  cursor: pointer;
   // text
   text-align: center;
   user-select: none;
