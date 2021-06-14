@@ -35,4 +35,5 @@ export type Day = {
   disabled: boolean;
   startRange: boolean;
   endRange: boolean;
+  today: boolean;
 };

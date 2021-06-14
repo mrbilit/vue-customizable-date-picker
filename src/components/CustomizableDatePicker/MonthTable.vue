@@ -115,6 +115,10 @@ export default Vue.extend({
           dayInWeek: this.calendar.getDayInWeek(
             this.calendar.getDate(this.year, this.month, i)
           ),
+          today: this.calendar.isSame(
+            new Date(),
+            this.calendar.getDate(this.year, this.month, i)
+          ),
         });
       }
       return list;
