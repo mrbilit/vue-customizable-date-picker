@@ -18,6 +18,7 @@
             'end-range': day.endRange,
             'start-week': day.dayInWeek === 0,
             'end-week': day.dayInWeek === 6,
+            today: day.today,
           }"
         >
           <div class="day-container">
@@ -175,6 +176,12 @@ html[dir="rtl"] {
         width: 10px;
         left: 0px;
       }
+    }
+  }
+
+  &.today {
+    .day-container {
+      border: 1px solid $primary;
     }
   }
   .day-container {
