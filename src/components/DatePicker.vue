@@ -21,6 +21,7 @@
           }"
         >
           <div class="day-container">
+            <span class="holiday" v-if="day.dayInWeek === 6" />
             {{ day.dayInMonth }}
             <div class="price">
               {{ getPrice(day) }}
@@ -177,6 +178,7 @@ html[dir="rtl"] {
     }
   }
   .day-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -198,6 +200,15 @@ html[dir="rtl"] {
       font-weight: 300;
       font-size: 10px;
       color: #9095a7;
+    }
+    .holiday {
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 4px;
+      height: 4px;
+      background: #fd6727;
+      border-radius: 100%;
     }
   }
 }
