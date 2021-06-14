@@ -16,17 +16,22 @@
             disable: day.disabled,
             'start-range': day.startRange,
             'end-range': day.endRange,
+            'start-week': day.dayInWeek === 0,
+            'end-week': day.dayInWeek === 6,
           }"
         >
           <div class="day-container">
             {{ day.dayInMonth }}
+            <div class="price">
+              {{ getPrice(day) }}
+            </div>
           </div>
         </div>
       </template>
     </customizable-date-picker>
     <div class="actions">
       <button class="change-cal-button" @click="changeCalendar">
-        {{ currentCalendar ? "تبدیل به خورشیدی" : "تبدیل به میلادی" }}
+        {{ currentCalendar ? "تبدیل به شمسی" : "تبدیل به میلادی" }}
       </button>
     </div>
   </div>
@@ -35,10 +40,13 @@
 <script lang="ts">
 import Vue from "vue";
 import { gregorianCalendar, jalaliCalendar } from "../calendars";
+import dayjs from "dayjs";
 
 import factory from "./CustomizableDatePicker";
+import { Calendar, Day } from "./CustomizableDatePicker/types";
 
-const CustomizableDatePicker = factory([jalaliCalendar, gregorianCalendar]);
+const calendars = [jalaliCalendar, gregorianCalendar];
+const CustomizableDatePicker = factory(calendars);
 
 export default Vue.extend({
   components: { CustomizableDatePicker },
@@ -49,9 +57,25 @@ export default Vue.extend({
       end: null,
     },
   }),
+  computed: {
+    prices(): { date: Date; price: number }[] {
+      return new Array(10).fill(0).map((v, i) => ({
+        date: dayjs().set("day", i).toDate(),
+        price: i * 99,
+      }));
+    },
+    calendar(): Calendar {
+      return calendars[this.currentCalendar];
+    },
+  },
   methods: {
     changeCalendar() {
       this.currentCalendar = this.currentCalendar ? 0 : 1;
+    },
+    getPrice(day: Day) {
+      const date = this.calendar.getDate(day.year, day.month, day.dayInMonth);
+      const price = this.prices.find((p) => this.calendar.isSame(p.date, date));
+      return price ? price.price : "";
     },
   },
 });
@@ -67,6 +91,35 @@ $primary: #188ef2;
   border-radius: 5px;
 }
 
+html[dir="rtl"] {
+  .day-wrapper {
+    &.start-range {
+      &::before {
+        left: -10px;
+        right: unset;
+      }
+      &.end-week {
+        &::before {
+          width: 10px;
+          left: 0px;
+        }
+      }
+    }
+    &.end-range {
+      &::before {
+        right: -10px;
+        left: unset;
+      }
+      &.start-week {
+        &::before {
+          width: 10px;
+          right: 0px;
+        }
+      }
+    }
+  }
+}
+
 .day-wrapper {
   display: flex;
   align-items: center;
@@ -79,6 +132,11 @@ $primary: #188ef2;
     .day-container {
       background: $primary;
       color: white;
+      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.25);
+      border: none;
+      .price {
+        color: white;
+      }
     }
   }
   &.between {
@@ -94,19 +152,33 @@ $primary: #188ef2;
       right: -10px;
       background: #d0edfa;
     }
+    &.end-week {
+      &::before {
+        width: 10px;
+        right: 0px;
+      }
+    }
   }
   &.end-range {
     position: relative;
     &::before {
+      position: absolute;
       content: " ";
       height: 100%;
       width: 20px;
       left: -10px;
       background: #d0edfa;
     }
+    &.start-week {
+      &::before {
+        width: 10px;
+        left: 0px;
+      }
+    }
   }
   .day-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     border: 0.5px solid #dcdcdc;
@@ -119,6 +191,50 @@ $primary: #188ef2;
     color: $primary;
     font-weight: 500;
     font-size: 20px;
+    .price {
+      height: 10px;
+      // text
+      font-style: normal;
+      font-weight: 300;
+      font-size: 10px;
+      color: #9095a7;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 16px;
+}
+
+.change-cal-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  font-weight: bold;
+  font-size: 14px;
+  height: 48px;
+  width: 128px;
+  text-align: center;
+  cursor: pointer;
+  border: 0;
+  outline: none;
+  color: $primary;
+  border: 1px solid $primary;
+  background: white;
+
+  &:hover {
+    opacity: 0.9;
+  }
+  &:active {
+    border: 0;
+    opacity: 0.8;
   }
 }
 
@@ -167,41 +283,6 @@ $primary: #188ef2;
     &:not(:last-of-type) {
       margin-right: 10px;
     }
-  }
-}
-.actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 10px 16px;
-}
-
-.change-cal-button {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin: 10px 0;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.15);
-  border-radius: 16px;
-  font-weight: bold;
-  font-size: 14px;
-  height: 48px;
-  width: 128px;
-  text-align: center;
-  cursor: pointer;
-  border: 0;
-  outline: none;
-  color: $primary;
-  border: 1px solid $primary;
-  background: white;
-
-  &:hover {
-    opacity: 0.9;
-  }
-  &:active {
-    border: 0;
-    opacity: 0.8;
   }
 }
 </style>
