@@ -35,6 +35,13 @@
   </div>
 </template>
 
+<script lang="ts">
+import Vue from "vue";
+export default Vue.extend({
+  name: "DatePickerMainHeader",
+});
+</script>
+
 <style lang="scss" scoped>
 .main-header-container {
   position: absolute;

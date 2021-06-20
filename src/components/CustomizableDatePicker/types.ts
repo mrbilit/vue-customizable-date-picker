@@ -19,11 +19,11 @@ export interface Calendar {
 }
 
 export type RangeValue = {
-  start: Date;
-  end: Date;
+  start: Date | null;
+  end: Date | null;
 };
 
-export type InputValue = Date | RangeValue;
+export type InputValue = Date | RangeValue | null;
 
 export type Day = {
   dayInMonth: number;
@@ -36,4 +36,9 @@ export type Day = {
   startRange: boolean;
   endRange: boolean;
   today: boolean;
+};
+
+export type Page = {
+  year: number;
+  month: number;
 };

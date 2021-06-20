@@ -40,16 +40,16 @@ import Vue, { PropType } from "vue";
 
 // components
 import WeekHeader from "./WeekHeader.vue";
-// import MonthTable from "./MonthTable.vue";
 
 // types
 import { Calendar, Day, InputValue, RangeValue } from "./types";
 
 export default Vue.extend({
+  name: "MonthTable",
   props: {
     value: {
       type: [Date, Object] as PropType<InputValue>,
-      required: true,
+      required: false,
     },
     month: {
       type: Number,
@@ -76,12 +76,12 @@ export default Vue.extend({
       default: null,
     },
     min: {
-      type: Date,
+      type: Date as PropType<Date>,
       required: false,
       default: null,
     },
     max: {
-      type: Date,
+      type: Date as PropType<Date>,
       required: false,
       default: null,
     },
@@ -234,8 +234,12 @@ export default Vue.extend({
             end: !isSame && isSelected && !start,
           };
         }
-        const start = this.calendar.isSame(value.start, currentDate);
-        const end = this.calendar.isSame(value.end, currentDate);
+        const start = value.start
+          ? this.calendar.isSame(value.start, currentDate)
+          : false;
+        const end = value.end
+          ? this.calendar.isSame(value.end, currentDate)
+          : false;
         return {
           isSelected: start || end,
           start,
@@ -263,8 +267,8 @@ export default Vue.extend({
         ) {
           return this.calendar.isBetween(
             this.calendar.getDate(this.year, this.month, day),
-            (this.value as RangeValue).start,
-            (this.value as RangeValue).end
+            (this.value as RangeValue).start as Date,
+            (this.value as RangeValue).end as Date
           );
         } else {
           return false;
@@ -278,6 +282,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+.month-table-container {
+  flex-shrink: 0;
+}
 .month-title {
   width: 100%;
   // text

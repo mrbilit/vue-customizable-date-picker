@@ -14,10 +14,11 @@ import { Calendar, Day, InputValue } from "./types";
 
 export default function datePickerFactory(calendars: Calendar[]): Component {
   return Vue.extend({
+    name: "CustomizableFactory",
     props: {
       value: {
         type: [Date, Object] as PropType<InputValue>,
-        required: true,
+        required: false,
       },
       monthCount: {
         type: Number,
@@ -36,12 +37,12 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         default: false,
       },
       min: {
-        type: Date,
+        type: Date as PropType<Date>,
         required: false,
         default: null,
       },
       max: {
-        type: Date,
+        type: Date as PropType<Date>,
         required: false,
         default: null,
       },
@@ -65,7 +66,8 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       dataTables(): VNode[] {
         const tables: VNode[] = [];
         for (let i = 0; i < this.monthCount; i++) {
-          const month = this.month + i < 12 ? this.month + i : 0;
+          const month =
+            this.month + i < 12 ? this.month + i : (this.month + i) % 12;
           const year = this.month + i > 11 ? this.year + 1 : this.year;
           tables.push(
             this.$createElement(MonthTable, {
@@ -103,6 +105,10 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
           this.month = 0;
           this.year++;
         }
+        this.$emit("page-change", {
+          year: this.year,
+          month: this.month,
+        });
       },
       prev() {
         if (this.month - 1 >= 0) {
@@ -111,12 +117,17 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
           this.month = 11;
           this.year--;
         }
+        this.$emit("page-change", {
+          year: this.year,
+          month: this.month,
+        });
       },
       onDrag(value: Date) {
         this.$emit("input", {
           start: null,
           end: null,
         });
+        this.$emit("drag");
         this.selectedFirstRange = value;
       },
       onInput(value: InputValue) {

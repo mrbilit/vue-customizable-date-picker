@@ -17,13 +17,13 @@ export const gregorianCalendar: Calendar = {
     return dayjs(date).isBetween(first, second, "day");
   },
   daysInMonth(month: number, year: number): number {
-    return dayjs().year(year).month(month).daysInMonth();
+    return dayjs().year(year).date(1).month(month).daysInMonth();
   },
   firstDayInMonth(month: number, year: number): number {
-    return dayjs().year(year).month(month).date(1).day();
+    return dayjs().year(year).date(1).month(month).day();
   },
   getDate(year: number, month: number, day: number): Date {
-    return dayjs().year(year).month(month).date(day).toDate();
+    return dayjs().year(year).date(day).month(month).toDate();
   },
   getYear(date: Date): number {
     return dayjs(date).year();
@@ -51,27 +51,29 @@ export const gregorianCalendar: Calendar = {
 };
 export const jalaliCalendar: Calendar = {
   isSame(first: Date, second: Date): boolean {
-    return dayjs(first).calendar("jalali").isSame(second, "day");
+    return dayjs(first).isSame(second, "day");
   },
   isAfter(first: Date, second: Date): boolean {
-    return dayjs(first).calendar("jalali").isAfter(second, "day");
+    return dayjs(first).isAfter(second, "day");
   },
   isBetween(date: Date, first: Date, second: Date): boolean {
-    return dayjs(date).calendar("jalali").isBetween(first, second, "day");
+    return dayjs(date).isBetween(first, second, "day");
   },
   daysInMonth(month: number, year: number): number {
-    return dayjs().calendar("jalali").year(year).month(month).daysInMonth();
-  },
-  firstDayInMonth(month: number, year: number): number {
-    return dayjs().calendar("jalali").year(year).month(month).date(1).day();
-  },
-  getDate(year: number, month: number, day: number): Date {
     return dayjs()
       .calendar("jalali")
       .year(year)
+      .date(1)
       .month(month)
-      .date(day)
-      .toDate();
+      .daysInMonth();
+  },
+  firstDayInMonth(month: number, year: number): number {
+    return dayjs().calendar("jalali").year(year).date(1).month(month).day();
+  },
+  getDate(year: number, month: number, day: number): Date {
+    return (dayjs as any)(`${year}-${month + 1}-${day}`, {
+      jalali: true,
+    }).toDate();
   },
   getYear(date: Date): number {
     return dayjs(date).calendar("jalali").year();

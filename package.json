@@ -1,6 +1,6 @@
 {
-  "name": "vue-customizable-date-picker",
-  "version": "0.1.0",
+  "name": "v-customizable-date-picker",
+  "version": "0.2.0",
   "description": "Gregorian/(Khorshidi/Jalali) date picker",
   "author": {
     "name": "Mehran Taheri",
