@@ -4,7 +4,7 @@
       v-model="localValue"
       class="my-date-picker"
       :currentCalendar="currentCalendar"
-      :month-count="12"
+      :month-count="2"
       range
     >
       <template #day-container="{ day }">
