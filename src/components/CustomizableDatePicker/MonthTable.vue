@@ -8,7 +8,7 @@
       <template v-for="emptyDay in emptyDays">
         <div :key="`empty-${emptyDay}`" class="main-day-wrapper empty" />
       </template>
-      <template v-for="day in daysInMonth">
+      <template v-for="day in daysInMonthList">
         <div
           class="main-day-wrapper"
           :key="day.dayInMonth"
@@ -43,6 +43,12 @@ import WeekHeader from "./WeekHeader.vue";
 
 // types
 import { Calendar, Day, InputValue, RangeValue } from "./types";
+type IsCheck = { [key: number]: boolean };
+type BaseDayInfo = Pick<
+  Day,
+  "dayInMonth" | "month" | "year" | "dayInWeek" | "today"
+>;
+type SelectDayInfo = Pick<Day, "isSelected" | "startRange" | "endRange">;
 
 export default Vue.extend({
   name: "MonthTable",
@@ -95,33 +101,50 @@ export default Vue.extend({
     headerTitle(): string {
       return `${this.calendar.months[this.month]} ${this.year}`;
     },
-    daysInMonth(): Day[] {
-      const list: Day[] = [];
-      for (
-        let i = 1;
-        i <= this.calendar.daysInMonth(this.month, this.year);
-        i++
-      ) {
-        const { start, end, isSelected } = this.isDaySelected(i);
-        list.push({
-          dayInMonth: i,
-          year: this.year,
-          month: this.month,
+    daysInMonth(): number {
+      return this.calendar.daysInMonth(this.month, this.year);
+    },
+    days(): BaseDayInfo[] {
+      return new Array(this.daysInMonth).fill(0).map((d, i) => ({
+        dayInMonth: i + 1,
+        month: this.month,
+        year: this.year,
+        dayInWeek: this.calendar.getDayInWeek(
+          this.calendar.getDate(this.year, this.month, i + 1)
+        ),
+        today: this.calendar.isSame(
+          new Date(),
+          this.calendar.getDate(this.year, this.month, i + 1)
+        ),
+      }));
+    },
+    daysDisabled(): IsCheck {
+      return this.days.map((d) => this.isDisable(d.dayInMonth));
+    },
+    daysBetween(): IsCheck {
+      return this.days.map((d) => this.isDayBetween(d.dayInMonth));
+    },
+    daysSelected(): SelectDayInfo[] {
+      return this.days.map((d) => {
+        const { start, end, isSelected } = this.isDaySelected(d.dayInMonth);
+        return {
           isSelected,
           startRange: start,
           endRange: end,
-          isBetween: this.isDayBetween(i),
-          disabled: this.isDisable(i),
-          dayInWeek: this.calendar.getDayInWeek(
-            this.calendar.getDate(this.year, this.month, i)
-          ),
-          today: this.calendar.isSame(
-            new Date(),
-            this.calendar.getDate(this.year, this.month, i)
-          ),
-        });
-      }
-      return list;
+        };
+      });
+    },
+    daysInMonthList(): Day[] {
+      return this.days.map((d, i) => {
+        return {
+          ...d,
+          isSelected: this.daysSelected[i].isSelected,
+          startRange: this.daysSelected[i].startRange,
+          endRange: this.daysSelected[i].endRange,
+          isBetween: this.daysBetween[i],
+          disabled: this.daysDisabled[i],
+        };
+      });
     },
     emptyDays(): number {
       return (

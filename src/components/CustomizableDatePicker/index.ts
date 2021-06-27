@@ -82,6 +82,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 min: this.min,
                 max: this.max,
               },
+              key: `${year}-${i}`,
               on: this.readOnly
                 ? {}
                 : {
