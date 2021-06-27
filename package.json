@@ -1,6 +1,6 @@
 {
   "name": "v-customizable-date-picker",
-  "version": "0.5.0",
+  "version": "0.5.5",
   "description": "Gregorian/(Khorshidi/Jalali) date picker",
   "author": {
     "name": "Mehran Taheri",
