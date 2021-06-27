@@ -61,7 +61,6 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         this.year = calendars[this.currentCalendar].currentYear;
       },
     },
-    provide: { calendars },
     computed: {
       dataTables(): VNode[] {
         const tables: VNode[] = [];
@@ -81,6 +80,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 currentHoveredDay: this.currentHoveredDay,
                 min: this.min,
                 max: this.max,
+                calendar: this.calendar,
               },
               key: `${year}-${i}`,
               on: this.readOnly
@@ -96,6 +96,9 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
           );
         }
         return tables;
+      },
+      calendar(): Calendar {
+        return calendars[this.currentCalendar];
       },
     },
     methods: {

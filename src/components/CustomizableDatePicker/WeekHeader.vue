@@ -11,24 +11,19 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 
 // types
 import { Calendar } from "./types";
 
 export default Vue.extend({
   props: {
-    currentCalendar: {
-      type: Number,
-      default: 0,
+    calendar: {
+      type: Object as PropType<Calendar>,
+      required: true,
     },
   },
-  inject: { inCalendars: "calendars" },
   computed: {
-    calendar(): Calendar {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return ((this as any).inCalendars as Calendar[])[this.currentCalendar];
-    },
     weekDays(): string[] {
       return this.calendar.weekdaysMin;
     },

@@ -2,7 +2,7 @@
   <div class="month-table-container">
     <div class="month-title">{{ headerTitle }}</div>
     <slot name="week-header">
-      <week-header :currentCalendar="currentCalendar" v-bind="$scopedSlots" />
+      <week-header :calendar="calendar" v-bind="$scopedSlots" />
     </slot>
     <div class="month-days-container">
       <template v-for="emptyDay in emptyDays">
@@ -65,9 +65,9 @@ export default Vue.extend({
       type: Number,
       required: true,
     },
-    currentCalendar: {
-      type: Number,
-      default: 0,
+    calendar: {
+      type: Object as PropType<Calendar>,
+      required: true,
     },
     range: {
       type: Boolean,
@@ -92,12 +92,7 @@ export default Vue.extend({
       default: null,
     },
   },
-  inject: { inCalendars: "calendars" },
   computed: {
-    calendar(): Calendar {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return ((this as any).inCalendars as Calendar[])[this.currentCalendar];
-    },
     headerTitle(): string {
       return `${this.calendar.months[this.month]} ${this.year}`;
     },
