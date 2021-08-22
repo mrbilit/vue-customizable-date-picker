@@ -32,6 +32,10 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         type: Boolean,
         default: false,
       },
+      onlyPick: {
+        type: String as PropType<"start" | "end">,
+        default: null,
+      },
       readOnly: {
         type: Boolean,
         default: false,
@@ -62,7 +66,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       return {
         month,
         year,
-        selectedFirstRange: null as Day | null,
+        selectedFirstRange: null as Date | null,
         currentHoveredDay: null as Day | null,
       };
     },
@@ -70,6 +74,18 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       currentCalendar() {
         this.month = calendars[this.currentCalendar].currentMonth;
         this.year = calendars[this.currentCalendar].currentYear;
+      },
+      onlyPick(val) {
+        if (this.range && val) {
+          const value = this.value as RangeValue;
+          if (val === "start") {
+            this.selectedFirstRange = value.end || new Date();
+          } else {
+            this.selectedFirstRange = value.start || new Date();
+          }
+        } else if (this.range && !val) {
+          this.selectedFirstRange = null;
+        }
       },
     },
     computed: {
@@ -87,6 +103,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 currentCalendar: this.currentCalendar,
                 value: this.value,
                 range: this.range,
+                onlyPick: this.onlyPick,
                 selectedFirstRange: this.selectedFirstRange,
                 currentHoveredDay: this.currentHoveredDay,
                 min: this.min,
@@ -145,9 +162,11 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         this.$emit("drag");
         this.selectedFirstRange = value;
       },
-      onInput(value: InputValue) {
-        this.selectedFirstRange = null;
-        this.$emit("input", value);
+      onInput(val: InputValue) {
+        if (!(this.range && this.onlyPick)) {
+          this.selectedFirstRange = null;
+        }
+        this.$emit("input", val);
       },
       onDayHover(day: Day) {
         this.currentHoveredDay = day;

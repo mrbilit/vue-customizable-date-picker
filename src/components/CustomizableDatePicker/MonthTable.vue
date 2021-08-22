@@ -91,6 +91,10 @@ export default Vue.extend({
       required: false,
       default: null,
     },
+    onlyPick: {
+      type: String as PropType<"start" | "end">,
+      default: null,
+    },
   },
   computed: {
     headerTitle(): string {
@@ -176,16 +180,44 @@ export default Vue.extend({
             this.month,
             day.dayInMonth
           );
-          if (this.calendar.isAfter(secondSelected, this.selectedFirstRange)) {
-            this.$emit("input", {
-              start: this.selectedFirstRange,
-              end: secondSelected,
-            });
+          if (this.onlyPick) {
+            if (this.onlyPick === "end") {
+              this.$emit("input", {
+                start: this.calendar.isAfter(
+                  this.selectedFirstRange,
+                  secondSelected
+                )
+                  ? secondSelected
+                  : this.selectedFirstRange,
+                end: secondSelected,
+              });
+            } else {
+              this.$emit("input", {
+                start: secondSelected,
+                end: this.calendar.isAfter(
+                  secondSelected,
+                  this.selectedFirstRange
+                )
+                  ? secondSelected
+                  : this.selectedFirstRange,
+              });
+            }
           } else {
-            this.$emit("input", {
-              start: secondSelected,
-              end: this.selectedFirstRange,
-            });
+            if (
+              this.onlyPick === "end" ||
+              (!this.onlyPick &&
+                this.calendar.isAfter(secondSelected, this.selectedFirstRange))
+            ) {
+              this.$emit("input", {
+                start: this.selectedFirstRange,
+                end: secondSelected,
+              });
+            } else {
+              this.$emit("input", {
+                start: secondSelected,
+                end: this.selectedFirstRange,
+              });
+            }
           }
         } else {
           this.$emit(
