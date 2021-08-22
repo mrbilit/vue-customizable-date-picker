@@ -62,7 +62,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       return {
         month,
         year,
-        selectedFirstRange: null as Day | null,
+        selectedFirstRange: null as Date | null,
         currentHoveredDay: null as Day | null,
       };
     },
