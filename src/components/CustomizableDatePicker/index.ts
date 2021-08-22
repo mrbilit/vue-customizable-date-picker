@@ -10,7 +10,7 @@ import MainHeader from "./MainHeader.vue";
 import MonthTable from "./MonthTable.vue";
 
 // types
-import { Calendar, Day, InputValue } from "./types";
+import { Calendar, Day, InputValue, RangeValue } from "./types";
 
 export default function datePickerFactory(calendars: Calendar[]): Component {
   return Vue.extend({
@@ -48,10 +48,21 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       },
     },
     data: function () {
+      const calendar: Calendar = calendars[this.currentCalendar];
+      let month = calendar.currentMonth;
+      let year = calendar.currentYear;
+      const value = this.range ? (this.value as RangeValue)?.start : this.value;
+      if (value) {
+        month = calendar.getMonth(value as Date);
+        year = calendar.getYear(value as Date);
+      } else if (this.min) {
+        month = calendar.getMonth(this.min);
+        year = calendar.getYear(this.min);
+      }
       return {
-        month: calendars[this.currentCalendar].currentMonth,
-        year: calendars[this.currentCalendar].currentYear,
-        selectedFirstRange: null as Date | null,
+        month,
+        year,
+        selectedFirstRange: null as Day | null,
         currentHoveredDay: null as Day | null,
       };
     },
