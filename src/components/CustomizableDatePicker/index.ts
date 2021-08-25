@@ -75,18 +75,6 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         this.month = calendars[this.currentCalendar].currentMonth;
         this.year = calendars[this.currentCalendar].currentYear;
       },
-      onlyPick(val) {
-        if (this.range && val) {
-          const value = this.value as RangeValue;
-          if (val === "start") {
-            this.selectedFirstRange = value.end || new Date();
-          } else {
-            this.selectedFirstRange = value.start || new Date();
-          }
-        } else if (this.range && !val) {
-          this.selectedFirstRange = null;
-        }
-      },
     },
     computed: {
       dataTables(): VNode[] {
@@ -103,18 +91,18 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 currentCalendar: this.currentCalendar,
                 value: this.value,
                 range: this.range,
-                onlyPick: this.onlyPick,
                 selectedFirstRange: this.selectedFirstRange,
                 currentHoveredDay: this.currentHoveredDay,
                 min: this.min,
                 max: this.max,
                 calendar: this.calendar,
+                onlyPickDay: this.range && !!this.onlyPick,
               },
               key: `${year}-${i}`,
               on: this.readOnly
                 ? {}
                 : {
-                    "day-click": this.$listeners["day-click"] || (() => null),
+                    "day-click": this.onDayClick,
                     input: this.onInput,
                     drag: this.onDrag,
                     "day-hover": this.onDayHover,
@@ -163,14 +151,37 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         this.selectedFirstRange = value;
       },
       onInput(val: InputValue) {
-        if (!(this.range && this.onlyPick)) {
-          this.selectedFirstRange = null;
-        }
+        this.selectedFirstRange = null;
         this.$emit("input", val);
       },
       onDayHover(day: Day) {
         this.currentHoveredDay = day;
         this.$emit("day-hover", day);
+      },
+      onDayClick(day: Day) {
+        this.$emit("day-click", day);
+        this.handleOnlyPick(day);
+      },
+      handleOnlyPick(day: Day) {
+        if (!this.onlyPick || !this.range) return;
+        const value = (this.value || {}) as RangeValue;
+        const newDate = this.calendar.getDate(
+          day.year,
+          day.month,
+          day.dayInMonth
+        );
+        if (this.onlyPick === "start") {
+          if (value.end && this.calendar.isAfter(newDate, value.end)) {
+            value.end = newDate;
+          }
+          value.start = newDate;
+        } else if (this.onlyPick === "end") {
+          if (value.start && this.calendar.isAfter(value.start, newDate)) {
+            value.start = newDate;
+          }
+          value.end = newDate;
+        }
+        this.$emit("input", value);
       },
     },
     render(createElement) {

@@ -91,9 +91,9 @@ export default Vue.extend({
       required: false,
       default: null,
     },
-    onlyPick: {
-      type: String as PropType<"start" | "end">,
-      default: null,
+    onlyPickDay: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -173,6 +173,12 @@ export default Vue.extend({
     },
     dayClick(day: Day) {
       if (day.disabled) return;
+      this.$emit("day-click", {
+        ...day,
+        year: this.year,
+        month: this.month,
+      });
+      if (this.onlyPickDay) return;
       if (this.range) {
         if (this.selectedFirstRange) {
           const secondSelected = this.calendar.getDate(
@@ -180,44 +186,16 @@ export default Vue.extend({
             this.month,
             day.dayInMonth
           );
-          if (this.onlyPick) {
-            if (this.onlyPick === "end") {
-              this.$emit("input", {
-                start: this.calendar.isAfter(
-                  this.selectedFirstRange,
-                  secondSelected
-                )
-                  ? secondSelected
-                  : this.selectedFirstRange,
-                end: secondSelected,
-              });
-            } else {
-              this.$emit("input", {
-                start: secondSelected,
-                end: this.calendar.isAfter(
-                  secondSelected,
-                  this.selectedFirstRange
-                )
-                  ? secondSelected
-                  : this.selectedFirstRange,
-              });
-            }
+          if (this.calendar.isAfter(secondSelected, this.selectedFirstRange)) {
+            this.$emit("input", {
+              start: this.selectedFirstRange,
+              end: secondSelected,
+            });
           } else {
-            if (
-              this.onlyPick === "end" ||
-              (!this.onlyPick &&
-                this.calendar.isAfter(secondSelected, this.selectedFirstRange))
-            ) {
-              this.$emit("input", {
-                start: this.selectedFirstRange,
-                end: secondSelected,
-              });
-            } else {
-              this.$emit("input", {
-                start: secondSelected,
-                end: this.selectedFirstRange,
-              });
-            }
+            this.$emit("input", {
+              start: secondSelected,
+              end: this.selectedFirstRange,
+            });
           }
         } else {
           this.$emit(
@@ -231,11 +209,6 @@ export default Vue.extend({
           this.calendar.getDate(this.year, this.month, day.dayInMonth)
         );
       }
-      this.$emit("day-click", {
-        ...day,
-        year: this.year,
-        month: this.month,
-      });
     },
     isDisable(day: number): boolean {
       let beforeMin = false;
