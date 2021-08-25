@@ -91,6 +91,10 @@ export default Vue.extend({
       required: false,
       default: null,
     },
+    onlyPickDay: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     headerTitle(): string {
@@ -169,6 +173,12 @@ export default Vue.extend({
     },
     dayClick(day: Day) {
       if (day.disabled) return;
+      this.$emit("day-click", {
+        ...day,
+        year: this.year,
+        month: this.month,
+      });
+      if (this.onlyPickDay) return;
       if (this.range) {
         if (this.selectedFirstRange) {
           const secondSelected = this.calendar.getDate(
@@ -199,11 +209,6 @@ export default Vue.extend({
           this.calendar.getDate(this.year, this.month, day.dayInMonth)
         );
       }
-      this.$emit("day-click", {
-        ...day,
-        year: this.year,
-        month: this.month,
-      });
     },
     isDisable(day: number): boolean {
       let beforeMin = false;

@@ -32,6 +32,10 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         type: Boolean,
         default: false,
       },
+      onlyPick: {
+        type: String as PropType<"start" | "end">,
+        default: null,
+      },
       readOnly: {
         type: Boolean,
         default: false,
@@ -92,12 +96,13 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 min: this.min,
                 max: this.max,
                 calendar: this.calendar,
+                onlyPickDay: this.range && !!this.onlyPick,
               },
               key: `${year}-${i}`,
               on: this.readOnly
                 ? {}
                 : {
-                    "day-click": this.$listeners["day-click"] || (() => null),
+                    "day-click": this.onDayClick,
                     input: this.onInput,
                     drag: this.onDrag,
                     "day-hover": this.onDayHover,
@@ -145,13 +150,38 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         this.$emit("drag");
         this.selectedFirstRange = value;
       },
-      onInput(value: InputValue) {
+      onInput(val: InputValue) {
         this.selectedFirstRange = null;
-        this.$emit("input", value);
+        this.$emit("input", val);
       },
       onDayHover(day: Day) {
         this.currentHoveredDay = day;
         this.$emit("day-hover", day);
+      },
+      onDayClick(day: Day) {
+        this.$emit("day-click", day);
+        this.handleOnlyPick(day);
+      },
+      handleOnlyPick(day: Day) {
+        if (!this.onlyPick || !this.range) return;
+        const value = (this.value || {}) as RangeValue;
+        const newDate = this.calendar.getDate(
+          day.year,
+          day.month,
+          day.dayInMonth
+        );
+        if (this.onlyPick === "start") {
+          if (value.end && this.calendar.isAfter(newDate, value.end)) {
+            value.end = newDate;
+          }
+          value.start = newDate;
+        } else if (this.onlyPick === "end") {
+          if (value.start && this.calendar.isAfter(value.start, newDate)) {
+            value.start = newDate;
+          }
+          value.end = newDate;
+        }
+        this.$emit("input", value);
       },
     },
     render(createElement) {
