@@ -1,6 +1,8 @@
 <template>
   <div class="month-table-container">
-    <div class="month-title">{{ headerTitle }}</div>
+    <slot name="month-title" :startMonthDate="startMonthDate">
+      <div class="month-title">{{ headerTitle }}</div>
+    </slot>
     <slot name="week-header">
       <week-header :calendar="calendar" v-bind="$scopedSlots" />
     </slot>
@@ -163,6 +165,9 @@ export default Vue.extend({
       } else {
         return null;
       }
+    },
+    startMonthDate(): Date {
+      return this.calendar.getDate(this.year, this.month, 1);
     },
   },
   components: { WeekHeader },
