@@ -50,13 +50,17 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         required: false,
         default: null,
       },
+      startMonthFromNow: {
+        type: Boolean,
+        default: false,
+      },
     },
     data: function () {
       const calendar: Calendar = calendars[this.currentCalendar];
       let month = calendar.currentMonth;
       let year = calendar.currentYear;
       const value = this.range ? (this.value as RangeValue)?.start : this.value;
-      if (value) {
+      if (value && !this.startMonthFromNow) {
         month = calendar.getMonth(value as Date);
         year = calendar.getYear(value as Date);
       } else if (this.min) {
