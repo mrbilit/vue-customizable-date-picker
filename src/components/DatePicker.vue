@@ -1,11 +1,13 @@
 <template>
   <div class="date-picker-wrapper">
+    {{ localValue }}
     <customizable-date-picker
       v-model="localValue"
       class="my-date-picker"
       :currentCalendar="currentCalendar"
       :month-count="2"
       range
+      track-start
     >
       <template #day-container="{ day }">
         <div

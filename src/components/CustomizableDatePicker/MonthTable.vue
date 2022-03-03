@@ -197,10 +197,7 @@ export default Vue.extend({
               end: secondSelected,
             });
           } else {
-            this.$emit("input", {
-              start: secondSelected,
-              end: this.selectedFirstRange,
-            });
+            this.$emit("drag", secondSelected);
           }
         } else {
           this.$emit(
@@ -247,19 +244,19 @@ export default Vue.extend({
             this.selectedFirstRange,
             currentDate
           );
-          let start = false;
-          let isSame = false;
+          let isHovered = false;
+          let isHoveredAfter = false;
           if (this.hoveredDayDate) {
-            start = this.calendar.isAfter(
+            isHovered = this.calendar.isSame(this.hoveredDayDate, currentDate);
+            isHoveredAfter = this.calendar.isAfter(
               this.hoveredDayDate,
               this.selectedFirstRange
             );
-            isSame = this.calendar.isSame(this.hoveredDayDate, currentDate);
           }
           return {
-            isSelected,
-            start: !isSame && isSelected && start,
-            end: !isSame && isSelected && !start,
+            isSelected: isSelected || isHovered,
+            start: isHoveredAfter && isSelected,
+            end: isHoveredAfter && isHovered,
           };
         }
         const start = value.start
@@ -284,11 +281,17 @@ export default Vue.extend({
     isDayBetween(day: number): boolean {
       if (this.range) {
         if (this.selectedFirstRange && this.hoveredDayDate) {
-          return this.calendar.isBetween(
-            this.calendar.getDate(this.year, this.month, day),
-            this.selectedFirstRange,
-            this.hoveredDayDate
-          );
+          if (
+            this.calendar.isAfter(this.hoveredDayDate, this.selectedFirstRange)
+          ) {
+            return this.calendar.isBetween(
+              this.calendar.getDate(this.year, this.month, day),
+              this.selectedFirstRange,
+              this.hoveredDayDate
+            );
+          } else {
+            return false;
+          }
         } else if (
           (this.value as RangeValue).start &&
           (this.value as RangeValue).end

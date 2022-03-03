@@ -54,6 +54,10 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         type: Boolean,
         default: false,
       },
+      trackStart: {
+        type: Boolean,
+        default: false,
+      },
     },
     data: function () {
       const calendar: Calendar = calendars[this.currentCalendar];
@@ -78,6 +82,11 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       currentCalendar() {
         this.month = calendars[this.currentCalendar].currentMonth;
         this.year = calendars[this.currentCalendar].currentYear;
+      },
+      "value.start"(val) {
+        if (this.range && this.trackStart && !(this.value as RangeValue).end) {
+          this.selectedFirstRange = val;
+        }
       },
     },
     computed: {
@@ -148,7 +157,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       },
       onDrag(value: Date) {
         this.$emit("input", {
-          start: null,
+          start: this.trackStart ? value : null,
           end: null,
         });
         this.$emit("drag");
