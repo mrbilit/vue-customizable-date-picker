@@ -254,7 +254,7 @@ export default Vue.extend({
             );
           }
           return {
-            isSelected: isSelected || isHovered,
+            isSelected: isSelected,
             start: isHoveredAfter && isSelected,
             end: isHoveredAfter && isHovered,
           };
