@@ -206,7 +206,13 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
             on: { next: (this as any).next, prev: (this as any).prev },
             scopedSlots: this.$scopedSlots,
           }),
-          ...(this as any).dataTables,
+          createElement(
+            "div",
+            {
+              class: "month-list",
+            },
+            (this as any).dataTables
+          ),
         ]
       );
     },

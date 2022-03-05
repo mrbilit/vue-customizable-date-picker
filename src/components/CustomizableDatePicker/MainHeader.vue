@@ -44,13 +44,10 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .main-header-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 .arrow-button {

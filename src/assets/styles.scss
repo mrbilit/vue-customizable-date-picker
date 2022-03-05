@@ -1,4 +1,7 @@
-.customizable-date-picker-container{
-    position: relative;
+.customizable-date-picker-container {
+  display: flex;
+  flex-direction: column;
+  .month-list {
     display: flex;
+  }
 }
