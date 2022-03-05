@@ -97,6 +97,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    unequalRange: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     headerTitle(): string {
@@ -191,7 +195,11 @@ export default Vue.extend({
             this.month,
             day.dayInMonth
           );
-          if (this.calendar.isAfter(secondSelected, this.selectedFirstRange)) {
+          if (
+            this.calendar.isAfter(secondSelected, this.selectedFirstRange) ||
+            (!this.unequalRange &&
+              this.calendar.isSame(secondSelected, this.selectedFirstRange))
+          ) {
             this.$emit("input", {
               start: this.selectedFirstRange,
               end: secondSelected,

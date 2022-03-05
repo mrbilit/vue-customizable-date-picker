@@ -58,6 +58,10 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
         type: Boolean,
         default: false,
       },
+      unequalRange: {
+        type: Boolean,
+        default: false,
+      },
     },
     data: function () {
       const calendar: Calendar = calendars[this.currentCalendar];
@@ -110,6 +114,7 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
                 max: this.max,
                 calendar: this.calendar,
                 onlyPickDay: this.range && !!this.onlyPick,
+                unequalRange: this.unequalRange,
               },
               key: `${year}-${i}`,
               on: this.readOnly
@@ -169,7 +174,10 @@ export default function datePickerFactory(calendars: Calendar[]): Component {
       },
       onDayHover(day: Day) {
         this.currentHoveredDay = day;
-        this.$emit("day-hover", day);
+        this.$emit(
+          "day-hover",
+          this.calendar.getDate(day.year, day.month, day.dayInMonth)
+        );
       },
       onDayClick(day: Day) {
         this.$emit("day-click", day);
