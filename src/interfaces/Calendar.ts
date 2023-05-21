@@ -42,3 +42,9 @@ export type Page = {
   year: number;
   month: number;
 };
+
+export type IsCheck = { [key: number]: boolean };
+
+export type BaseDayInfo = Pick<Day, "dayInMonth" | "month" | "year" | "dayInWeek" | "today">;
+
+export type SelectDayInfo = Pick<Day, "isSelected" | "startRange" | "endRange">;

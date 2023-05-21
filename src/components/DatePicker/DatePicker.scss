@@ -1,0 +1,116 @@
+@import "../../assets/colors.scss";
+
+$days-gap: 8px;
+$days-raduis: 8px;
+
+.date-picker::v-deep {
+  user-select: none;
+  padding: 8px;
+  box-shadow: 0 0 16px 0 rgba($color: $color-gray-900, $alpha: 0.4);
+  color: $color-gray-900;
+  border-radius: $days-raduis;
+  background-color: $color-white;
+  .main-header-container {
+    padding: 8px 0;
+    .arrow-button {
+      padding: 8px;
+      border: 1px solid $color-gray-500;
+      box-shadow: 1px 1px 2px 0 rgba($color: $color-gray-900, $alpha: 0.2);
+      border-radius: $days-raduis;
+      display: flex;
+    }
+  }
+  .month-title {
+    font-size: 18px;
+    padding: 8px 0;
+  }
+  .week-days-container {
+    color: $color-gray-600;
+  }
+  .day-wrapper,
+  .day-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .main-day-wrapper {
+    padding: $days-gap 0;
+  }
+  .day-wrapper {
+    padding: 0 $days-gap;
+    &.start-range,
+    &.start-week,
+    &.start-month {
+      padding-left: 0;
+      margin-left: $days-gap;
+      border-top-left-radius: $days-raduis;
+      border-bottom-left-radius: $days-raduis;
+    }
+    &.end-range,
+    &.end-week,
+    &.end-month {
+      padding-right: 0;
+      margin-right: $days-gap;
+      border-top-right-radius: $days-raduis;
+      border-bottom-right-radius: $days-raduis;
+    }
+    &:hover:not(.start-range, .end-range, .between) {
+      padding: 0;
+      margin: 0 $days-gap;
+    }
+  }
+  .day-wrapper:not(.today) {
+    .day-container {
+      border: 1px solid $color-gray-400;
+    }
+  }
+  .day-container {
+    position: relative;
+    cursor: pointer;
+    aspect-ratio: 1/1;
+    width: 100%;
+    border-radius: $days-raduis;
+    transition: 200ms ease-out;
+    .day {
+      font-size: 20px;
+    }
+  }
+}
+
+.date-picker::v-deep {
+  $primary: $color-blue;
+  &.blue {
+    .day-wrapper.today {
+      .day-container::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        // background-color: #000;
+        border-radius: $days-raduis;
+        box-sizing: content-box;
+        padding: 1px;
+        margin: auto;
+        border: 2px solid $primary;
+      }
+    }
+    .day-wrapper.start-range,
+    .day-wrapper.end-range,
+    .day-wrapper.between {
+      background-color: rgba($color: $primary, $alpha: 0.4);
+    }
+    .day-wrapper.selected,
+    .day-wrapper.start-range,
+    .day-wrapper.end-range {
+      .day-container {
+        background-color: $primary;
+        color: $color-white;
+      }
+    }
+    .day-container:hover {
+      background-color: $primary;
+      color: $color-white;
+    }
+  }
+}
