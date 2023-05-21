@@ -1,6 +1,6 @@
 {
   "name": "@mrblit/date-picker",
-  "version": "0.6.9",
+  "version": "1.6.8",
   "description": "Gregorian/(Khorshidi/Jalali) date picker",
   "type": "module",
   "main": "./dist/date-picker.umd.cjs",
