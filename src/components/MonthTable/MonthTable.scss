@@ -1,0 +1,51 @@
+.month-table-container {
+  flex-shrink: 0;
+  flex-basis: 50%;
+  &.single {
+    flex-basis: 100%;
+  }
+}
+.month-title {
+  width: 100%;
+  // text
+  text-align: center;
+}
+
+.month-days-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.main-day-wrapper {
+  flex-basis: 14.285714286%;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  &.empty {
+    visibility: hidden;
+  }
+}
+.main-day-container {
+  cursor: pointer;
+  // text
+  text-align: center;
+  user-select: none;
+
+  &:hover:not(.disable) {
+    background: rgba($color: #8f8f8f, $alpha: 0.5);
+  }
+
+  &.selected {
+    background: rgba($color: #8f8f8f, $alpha: 0.5);
+  }
+
+  &.between {
+    background: rgba($color: #dbdbdb, $alpha: 0.5);
+  }
+
+  &.disable {
+    color: gray;
+    cursor: unset;
+  }
+}

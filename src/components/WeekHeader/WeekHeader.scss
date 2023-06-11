@@ -1,0 +1,12 @@
+.week-days-container {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.week-day-container {
+  flex-basis: 14.285714286%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  // text
+  text-align: center;
+}

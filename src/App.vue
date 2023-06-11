@@ -1,65 +1,22 @@
-<template>
-  <div class="page-container">
-    <div>{{ value }}</div>
-    <customizable-date-picker
-      v-model="value"
-      :currentCalendar="currentCalendar"
-      :month-count="2"
-      range
-      @day-click="onDayClick"
-    >
-      <!-- <template #day="{ day }">
-        <div>{{ day.disabled }}</div>
-      </template> -->
-    </customizable-date-picker>
-    <button
-      @click="
-        currentCalendar === 1 ? (currentCalendar = 0) : (currentCalendar = 1)
-      "
-    >
-      switch
-    </button>
-    <date-picker />
-  </div>
-</template>
+<script setup lang="ts">
+import { ref } from "vue";
+import { InputValue } from "@interfaces/Calendar";
+import { gregorianCalendar, jalaliCalendar } from "@services/Calendar";
+import DatePicker from "@components/DatePicker";
 
-<script lang="ts">
-import Vue from "vue";
-// factory component
-import factory from "./components/CustomizableDatePicker";
-// customized picker
-import DatePicker from "./components/DatePicker.vue";
-// calendars
-import { gregorianCalendar, jalaliCalendar } from "./calendars";
-
-const CustomizableDatePicker = factory([jalaliCalendar, gregorianCalendar]);
-
-export default Vue.extend({
-  components: { CustomizableDatePicker, DatePicker },
-  data: function () {
-    return {
-      value: {
-        start: null,
-        end: null,
-      },
-      currentCalendar: 0,
-    };
-  },
-  methods: {
-    onDayClick(day: any) {
-      console.log(day);
-    },
-  },
+const value = ref<InputValue>({
+  start: null,
+  end: null,
 });
+const currentCalendar = ref(0);
+
+const mmd = (day: any) => {
+  console.log(day);
+};
 </script>
 
-<style lang="scss" scoped>
-.page-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-}
-</style>
+<template>
+  <DatePicker :calendars="[jalaliCalendar, gregorianCalendar]" v-model="value" :currentCalendar="currentCalendar" :monthCount="2" range @day-click="mmd" />
+</template>
+
+<style scoped></style>

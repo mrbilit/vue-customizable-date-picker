@@ -1,29 +1,21 @@
-# vue-customizable-date-picker
+# Vue3 Customizable Date Picker
 
-## Project setup
-```
-yarn install
-```
+## Scripts
 
-### Compiles and hot-reloads for development
+For install dependencies .
+
 ```
-yarn serve
+npm install
 ```
 
-### Compiles and minifies for production
+Build component library .
+
 ```
-yarn build
+npm run build
 ```
 
-### Run your unit tests
-```
-yarn test:unit
-```
+Open documention of components .
 
-### Lints and fixes files
 ```
-yarn lint
+npm run storybook
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
