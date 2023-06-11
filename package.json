@@ -1,5 +1,5 @@
 {
-  "name": "@mrblit/date-picker",
+  "name": "v-customizable-date-picker",
   "version": "1.6.8",
   "description": "Gregorian/(Khorshidi/Jalali) date picker",
   "type": "module",
