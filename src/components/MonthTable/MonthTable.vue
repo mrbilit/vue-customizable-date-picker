@@ -1,28 +1,47 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { BaseDayInfo, Day, IsCheck, RangeValue, SelectDayInfo } from "@interfaces/Calendar";
-import WeekHeader from "@components/WeekHeader";
-import { IMonthTableProps } from "./MonthTable.interface";
+import {
+  BaseDayInfo,
+  Day,
+  IsCheck,
+  RangeValue,
+  SelectDayInfo,
+} from "@/interfaces/Calendar";
+import WeekHeader from "@/components/WeekHeader";
+import { IMonthTableProps } from "@/components/MonthTable/MonthTable.interface";
 
 const props = defineProps<IMonthTableProps>();
 const emit = defineEmits(["day-click", "day-hover", "drag", "input"]);
 
-const headerTitle = computed(() => `${props.calendar.months[props.month]} ${props.year}`);
-const daysInMonth = computed(() => props.calendar.daysInMonth(props.month, props.year));
+const headerTitle = computed(
+  () => `${props.calendar.months[props.month]} ${props.year}`
+);
+const daysInMonth = computed(() =>
+  props.calendar.daysInMonth(props.month, props.year)
+);
 
 const days = computed<BaseDayInfo[]>(() =>
   new Array(daysInMonth.value).fill(0).map((d, i) => ({
     dayInMonth: i + 1,
     month: props.month,
     year: props.year,
-    dayInWeek: props.calendar.getDayInWeek(props.calendar.getDate(props.year, props.month, i + 1)),
-    today: props.calendar.isSame(new Date(), props.calendar.getDate(props.year, props.month, i + 1)),
+    dayInWeek: props.calendar.getDayInWeek(
+      props.calendar.getDate(props.year, props.month, i + 1)
+    ),
+    today: props.calendar.isSame(
+      new Date(),
+      props.calendar.getDate(props.year, props.month, i + 1)
+    ),
   }))
 );
-const daysDisabled = computed<IsCheck>(() => days.value.map(d => isDisable(d.dayInMonth)));
-const daysBetween = computed<IsCheck>(() => days.value.map(d => isDayBetween(d.dayInMonth)));
+const daysDisabled = computed<IsCheck>(() =>
+  days.value.map((d) => isDisable(d.dayInMonth))
+);
+const daysBetween = computed<IsCheck>(() =>
+  days.value.map((d) => isDayBetween(d.dayInMonth))
+);
 const daysSelected = computed<SelectDayInfo[]>(() => {
-  return days.value.map(d => {
+  return days.value.map((d) => {
     const { start, end, isSelected } = isDaySelected(d.dayInMonth);
     return {
       isSelected,
@@ -44,7 +63,11 @@ const daysInMonthList = computed<Day[]>(() => {
   });
 });
 const emptyDays = computed<number>(
-  () => (props.calendar.firstDayInMonth(props.month, props.year) - props.calendar.startDayWeek + 7) % 7
+  () =>
+    (props.calendar.firstDayInMonth(props.month, props.year) -
+      props.calendar.startDayWeek +
+      7) %
+    7
 );
 const hoveredDayDate = computed<Date | null>(() => {
   if (props.currentHoveredDay) {
@@ -57,7 +80,9 @@ const hoveredDayDate = computed<Date | null>(() => {
     return null;
   }
 });
-const startMonthDate = computed<Date>(() => props.calendar.getDate(props.year, props.month, 1));
+const startMonthDate = computed<Date>(() =>
+  props.calendar.getDate(props.year, props.month, 1)
+);
 
 const isDisable = (day: number): boolean => {
   let beforeMin = false;
@@ -79,7 +104,9 @@ const isDisable = (day: number): boolean => {
 const isDayBetween = (day: number): boolean => {
   if (props.range) {
     if (props.selectedFirstRange && hoveredDayDate.value) {
-      if (props.calendar.isAfter(hoveredDayDate.value, props.selectedFirstRange)) {
+      if (
+        props.calendar.isAfter(hoveredDayDate.value, props.selectedFirstRange)
+      ) {
         return props.calendar.isBetween(
           props.calendar.getDate(props.year, props.month, day),
           props.selectedFirstRange,
@@ -88,7 +115,10 @@ const isDayBetween = (day: number): boolean => {
       } else {
         return false;
       }
-    } else if ((props.value as RangeValue).start && (props.value as RangeValue).end) {
+    } else if (
+      (props.value as RangeValue).start &&
+      (props.value as RangeValue).end
+    ) {
       return props.calendar.isBetween(
         props.calendar.getDate(props.year, props.month, day),
         (props.value as RangeValue).start as Date,
@@ -112,12 +142,18 @@ const isDaySelected = (
   if (props.range) {
     const value = props.value as RangeValue;
     if (props.selectedFirstRange) {
-      const isSelected = props.calendar.isSame(props.selectedFirstRange, currentDate);
+      const isSelected = props.calendar.isSame(
+        props.selectedFirstRange,
+        currentDate
+      );
       let isHovered = false;
       let isHoveredAfter = false;
       if (hoveredDayDate.value) {
         isHovered = props.calendar.isSame(hoveredDayDate.value, currentDate);
-        isHoveredAfter = props.calendar.isAfter(hoveredDayDate.value, props.selectedFirstRange);
+        isHoveredAfter = props.calendar.isAfter(
+          hoveredDayDate.value,
+          props.selectedFirstRange
+        );
       }
       return {
         isSelected: isSelected,
@@ -125,8 +161,12 @@ const isDaySelected = (
         end: isHoveredAfter && isHovered,
       };
     }
-    const start = value.start ? props.calendar.isSame(value.start, currentDate) : false;
-    const end = value.end ? props.calendar.isSame(value.end, currentDate) : false;
+    const start = value.start
+      ? props.calendar.isSame(value.start, currentDate)
+      : false;
+    const end = value.end
+      ? props.calendar.isSame(value.end, currentDate)
+      : false;
     return {
       isSelected: start || end,
       start,
@@ -154,10 +194,15 @@ const dayClick = (day: Day) => {
   if (props.onlyPickDay) return;
   if (props.range) {
     if (props.selectedFirstRange) {
-      const secondSelected = props.calendar.getDate(props.year, props.month, day.dayInMonth);
+      const secondSelected = props.calendar.getDate(
+        props.year,
+        props.month,
+        day.dayInMonth
+      );
       if (
         props.calendar.isAfter(secondSelected, props.selectedFirstRange) ||
-        (!props.unequalRange && props.calendar.isSame(secondSelected, props.selectedFirstRange))
+        (!props.unequalRange &&
+          props.calendar.isSame(secondSelected, props.selectedFirstRange))
       ) {
         emit("input", {
           start: props.selectedFirstRange,
@@ -167,16 +212,25 @@ const dayClick = (day: Day) => {
         emit("drag", secondSelected);
       }
     } else {
-      emit("drag", props.calendar.getDate(props.year, props.month, day.dayInMonth));
+      emit(
+        "drag",
+        props.calendar.getDate(props.year, props.month, day.dayInMonth)
+      );
     }
   } else {
-    emit("input", props.calendar.getDate(props.year, props.month, day.dayInMonth));
+    emit(
+      "input",
+      props.calendar.getDate(props.year, props.month, day.dayInMonth)
+    );
   }
 };
 </script>
 
 <template>
-  <div class="month-table-container" :class="{ single: props.monthCount === 1 }">
+  <div
+    class="month-table-container"
+    :class="{ single: props.monthCount === 1 }"
+  >
     <slot name="month-title" :startMonthDate="startMonthDate">
       <div class="month-title">{{ headerTitle }}</div>
     </slot>
@@ -188,7 +242,11 @@ const dayClick = (day: Day) => {
         <div class="main-day-wrapper empty"></div>
       </template>
       <template v-for="day in daysInMonthList" :key="day.dayInMonth">
-        <div class="main-day-wrapper" @click="dayClick(day)" @mouseenter="dayHover(day)">
+        <div
+          class="main-day-wrapper"
+          @click="dayClick(day)"
+          @mouseenter="dayHover(day)"
+        >
           <slot name="day-container" :day="day" :daysInMonth="daysInMonth">
             <div
               class="main-day-container"

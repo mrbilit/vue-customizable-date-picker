@@ -1,1 +1,1 @@
-export { default } from "./CustomizableDatePicker.vue";
+export { default as CustomizableDatePicker } from "./CustomizableDatePicker.vue";

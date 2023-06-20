@@ -1,4 +1,4 @@
-import { Calendar, Day, InputValue } from "@interfaces/Calendar";
+import { Calendar, Day, InputValue } from "@/interfaces/Calendar";
 
 export interface IMonthTableProps {
   value?: InputValue;

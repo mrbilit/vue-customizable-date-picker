@@ -1,5 +1,5 @@
-import { Page } from "@interfaces/Calendar";
-import { Calendar, Day, InputValue } from "@interfaces/Calendar";
+import { Page } from "@/interfaces/Calendar";
+import { Calendar, Day, InputValue } from "@/interfaces/Calendar";
 
 type TOnlyPick = "start" | "end";
 
