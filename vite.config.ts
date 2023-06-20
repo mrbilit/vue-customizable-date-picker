@@ -1,11 +1,9 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import tsconfigPaths from "vite-tsconfig-paths";
-import rollupTsconfigPaths from "rollup-plugin-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [tsconfigPaths(), vue()],
+  plugins: [vue()],
   build: {
     cssCodeSplit: true,
     lib: {
@@ -18,7 +16,7 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that should not be bundled
       // into your library
-      plugins: [rollupTsconfigPaths()],
+      plugins: [],
       input: {
         main: resolve(__dirname, "src/build.ts"),
       },

@@ -6,11 +6,11 @@
   "type": "module",
   "main": "./dist/v-customizable-date-picker.umd.js",
   "module": "./dist/v-customizable-date-picker.es.js",
-  "types": "./dist/build.d.ts",
   "exports": {
     ".": {
       "import": "./dist/v-customizable-date-picker.es.js",
-      "require": "./dist/v-customizable-date-picker.umd.js"
+      "require": "./dist/v-customizable-date-picker.umd.js",
+      "types": "./dist/build.d.ts"
     },
     "./dist/v-customizable-date-picker.css": {
       "import": "./dist/v-customizable-date-picker.css",
@@ -42,12 +42,10 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "dayjs": "^1.11.7",
     "jalaliday": "^2.3.0",
-    "rollup-plugin-tsconfig-paths": "^1.5.1",
     "sass": "^1.62.1",
     "storybook": "^7.0.12",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",
-    "vite-tsconfig-paths": "^4.2.0",
     "vue": "^3.2.47",
     "vue-tsc": "^1.4.2"
   }

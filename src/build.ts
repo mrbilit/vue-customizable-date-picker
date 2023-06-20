@@ -9,7 +9,7 @@ export type {
   Page,
   RangeValue,
   SelectDayInfo,
-} from "./interfaces/Calendar";
+} from "@/interfaces/Calendar";
 
 export default {
   install: (app: App) => {

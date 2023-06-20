@@ -1,6 +1,6 @@
 import { createApp } from "vue";
-import App from "@App.vue";
-import "@assets/app.scss";
+import App from "@/App.vue";
+import "@/assets/app.scss";
 
 const app = createApp(App);
 
