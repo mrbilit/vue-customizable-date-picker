@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import jalaliday from "jalaliday";
-import { Calendar } from "@/interfaces/Calendar";
+import { Calendar } from "./interfaces/Calendar";
 
 dayjs.extend(isBetween);
 dayjs.extend(jalaliday);

@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from "vue";
-import { Day, InputValue, Page, RangeValue } from "@/interfaces/Calendar";
-import MainHeader from "@/components/MainHeader";
-import MonthTable from "@/components/MonthTable";
+import { Day, InputValue, Page, RangeValue } from "../../interfaces/Calendar";
+import MainHeader from "../../components/MainHeader";
+import MonthTable from "../../components/MonthTable";
 import {
   ICustomizableDatePickerEmits,
   ICustomizableDatePickerProps,
-} from "@/components/CustomizableDatePicker/CustomizableDatePicker.interface";
+} from "../../components/CustomizableDatePicker/CustomizableDatePicker.interface";
 
 const props = defineProps<ICustomizableDatePickerProps>();
 const emit = defineEmits<ICustomizableDatePickerEmits>();

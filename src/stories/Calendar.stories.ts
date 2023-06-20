@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 
-import DatePicker from "@/components/DatePicker";
-import { gregorianCalendar, jalaliCalendar } from "@/services/Calendar";
+import DatePicker from "../components/DatePicker";
+import { gregorianCalendar, jalaliCalendar } from "../services/Calendar";
 import { ref } from "vue";
 
 const meta: Meta<typeof DatePicker> = {
