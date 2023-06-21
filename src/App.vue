@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { InputValue } from "@/interfaces/Calendar";
-import { gregorianCalendar, jalaliCalendar } from "@/services/Calendar";
-import DatePicker from "@/components/DatePicker";
+import { InputValue } from "./interfaces/Calendar";
+import { gregorianCalendar, jalaliCalendar } from "./services/Calendar";
+import DatePicker from "./components/DatePicker";
 
 const value = ref<InputValue>({
   start: null,

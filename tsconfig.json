@@ -20,9 +20,6 @@
     "outDir": "dist",
     "declarationDir": "dist",
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   },
   "include": ["src/build.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

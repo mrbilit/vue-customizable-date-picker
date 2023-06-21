@@ -1,5 +1,5 @@
 import type { App } from "vue";
-import { CustomizableDatePicker } from "@/components";
+import { CustomizableDatePicker } from "./components";
 export type {
   BaseDayInfo,
   Calendar,

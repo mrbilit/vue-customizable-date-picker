@@ -16,6 +16,7 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that should not be bundled
       // into your library
+      plugins: [],
       input: {
         main: resolve(__dirname, "src/build.ts"),
       },
@@ -31,11 +32,6 @@ export default defineConfig({
           vue: "Vue",
         },
       },
-    },
-  },
-  resolve: {
-    alias: {
-      "@": resolve(__dirname, "src"),
     },
   },
 });

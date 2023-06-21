@@ -6,9 +6,9 @@ import {
   IsCheck,
   RangeValue,
   SelectDayInfo,
-} from "@/interfaces/Calendar";
-import WeekHeader from "@/components/WeekHeader";
-import { IMonthTableProps } from "@/components/MonthTable/MonthTable.interface";
+} from "../../interfaces/Calendar";
+import WeekHeader from "../../components/WeekHeader";
+import { IMonthTableProps } from "../../components/MonthTable/MonthTable.interface";
 
 const props = defineProps<IMonthTableProps>();
 const emit = defineEmits(["day-click", "day-hover", "drag", "input"]);
