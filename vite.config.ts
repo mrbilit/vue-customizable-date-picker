@@ -8,7 +8,7 @@ export default defineConfig({
     cssCodeSplit: true,
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: "src/build.ts",
+      entry: resolve(__dirname, "src/build.ts"),
       name: "VueCustomizableDatePicker",
       formats: ["es", "cjs", "umd"],
       fileName: (format) => `v-customizable-date-picker.${format}.js`,
@@ -16,10 +16,6 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that should not be bundled
       // into your library
-      plugins: [],
-      input: {
-        main: resolve(__dirname, "src/build.ts"),
-      },
       external: ["vue"],
       output: {
         assetFileNames: (assetInfo) => {
@@ -27,10 +23,10 @@ export default defineConfig({
             return "v-customizable-date-picker.css";
           return assetInfo.name;
         },
-        exports: "named",
         globals: {
           vue: "Vue",
         },
+        dir: "dist",
       },
     },
   },
