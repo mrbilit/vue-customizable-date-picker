@@ -11,8 +11,8 @@ export interface ICustomizableDatePickerProps {
   range?: boolean;
   onlyPick?: TOnlyPick;
   readOnly?: boolean;
-  min?: Date;
-  max?: Date;
+  min?: Date | null;
+  max?: Date | null;
   startMonthFromNow?: boolean;
   trackStart?: boolean;
   unequalRange?: boolean;
