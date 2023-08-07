@@ -1,6 +1,6 @@
 {
   "name": "v-customizable-date-picker",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": false,
   "description": "Gregorian/(Khorshidi/Jalali) date picker",
   "type": "module",
