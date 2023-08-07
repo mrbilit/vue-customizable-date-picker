@@ -51,11 +51,11 @@ watch(value, () => {
 });
 
 const next = () => {
-  if (month.value - 1 >= 0) {
-    month.value--;
+  if (month.value + 1 <= 11) {
+    month.value++;
   } else {
-    month.value = 11;
-    year.value--;
+    month.value = 0;
+    year.value++;
   }
   emit("page-change", {
     year: year.value,
@@ -63,11 +63,11 @@ const next = () => {
   });
 };
 const prev = () => {
-  if (month.value + 1 <= 11) {
-    month.value++;
+  if (month.value - 1 >= 0) {
+    month.value--;
   } else {
-    month.value = 0;
-    year.value++;
+    month.value = 11;
+    year.value--;
   }
   emit("page-change", {
     year: year.value,
@@ -119,7 +119,14 @@ const handleOnlyPick = (day: Day) => {
 
 <template>
   <div class="customizable-date-picker-container">
-    <MainHeader @next="next" @prev="prev" :slot="$slots" />
+    <MainHeader @next="next" @prev="prev">
+      <template #header-next-button>
+        <slot name="header-next-button" />
+      </template>
+      <template #header-prev-button>
+        <slot name="header-prev-button" />
+      </template>
+    </MainHeader>
     <div class="month-list">
       <MonthTable
         v-for="dateTable in dateTables"
